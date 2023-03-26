@@ -43,7 +43,7 @@ UiManager.getFragment(0).view.addView(loadlayout(layout))
 
 
 function add(index)
-  if(data[index].view_type==1)then
+  if(data[index].viewType==1)then
     main.addView(loadlayout(
     {
       LinearLayout;--线性控件
@@ -70,7 +70,7 @@ function add(index)
       };
     }))
   end
-  if(data[index].view_type==2)then
+  if(data[index].viewType==2)then
     main.addView(loadlayout({
       MaterialCardView;--卡片控件
       layout_width="fill";--卡片宽度
@@ -139,7 +139,7 @@ function add(index)
       };
     }))
   end
-  if(data[index].view_type==3)then
+  if(data[index].viewType==3)then
     main.addView(loadlayout({
       MaterialCardView;--卡片控件
       layout_width="fill";--卡片宽度
@@ -189,7 +189,7 @@ function add(index)
       };
     }))
   end
-  if(data[index].view_type==4)then
+  if(data[index].viewType==4)then
     main.addView(loadlayout({
       LinearLayout;--线性控件
       orientation="horizontal";--布局方向
@@ -210,18 +210,18 @@ end
 
 
 data={
-  {view_type=1,title="基本设置"},
-  {view_type=2,title="启动时检查更新",icon="cloud_upload",check=activity.getSharedData("自动更新"),click=function()
+  {viewType=1,title="基本设置"},
+  {viewType=2,title="启动时检查更新",icon="cloud_upload",check=activity.getSharedData("自动更新"),click=function()
       activity.setSharedData("自动更新",not(activity.getSharedData("自动更新")))
       main.getChildAt(1).getChildAt(0).getChildAt(2).checked=activity.getSharedData("自动更新")
     end},
-  {view_type=4},
-  {view_type=1,title="下载安装"},
-  {view_type=2,title="下载完成后自动安装",icon="move_to_inbox",check=activity.getSharedData("自动安装"),click=function()
+  {viewType=4},
+  {viewType=1,title="下载安装"},
+  {viewType=2,title="下载完成后自动安装",icon="move_to_inbox",check=activity.getSharedData("自动安装"),click=function()
       activity.setSharedData("自动安装",not(activity.getSharedData("自动安装")))
       main.getChildAt(4).getChildAt(0).getChildAt(2).checked=activity.getSharedData("自动安装")
     end},
-  {view_type=3,title="下载目录",icon="file_download",click=function()
+  {viewType=3,title="下载目录",icon="file_download",click=function()
       local dialog=AlertDialog.Builder(this)
       .setTitle("下载目录")
       .setView(loadlayout(
@@ -260,7 +260,7 @@ data={
       .setNegativeButton("取消",nil)
       .show()
     end},
-  {view_type=3,title="图片下载目录",icon="image",click=function()
+  {viewType=3,title="图片下载目录",icon="image",click=function()
       local dialog=AlertDialog.Builder(this)
       .setTitle("图片下载目录")
       .setView(loadlayout(
@@ -299,9 +299,9 @@ data={
       .setNegativeButton("取消",nil)
       .show()
     end},
-  {view_type=4},
-  {view_type=1,title="更多设置"},
-  {view_type=3,title="清理缓存",icon="delete",click=function()
+  {viewType=4},
+  {viewType=1,title="更多设置"},
+  {viewType=3,title="清理缓存",icon="delete",click=function()
       进入子页面("clean")
     end},
 }
