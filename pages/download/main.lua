@@ -35,7 +35,7 @@ layout=
   layout_height="fill";--布局高度
   gravity="center";--控件内容的重力方向
   --左:left 右:right 中:center 顶:top 底:bottom
-  id="page3_none";--设置控件ID
+  id="none";--设置控件ID
   {
     TextView;--文本控件
     layout_width="wrap";--控件宽度
