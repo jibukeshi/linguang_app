@@ -1,7 +1,7 @@
 --获取更新信息
-package_name=activity.getPackageManager().getPackageInfo(activity.getPackageName(),1)
-version_name=tostring(package_name.versionName)
-version_code=tonumber(package_name.versionCode)
+packageName=activity.getPackageManager().getPackageInfo(activity.getPackageName(),1)
+versionName=tostring(packageName.versionName)
+versionCode=tonumber(packageName.versionCode)
 
 --更新弹窗
 function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,更新日期,安装包大小,更新日志,下载链接)
@@ -150,7 +150,7 @@ function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,
           text='';--显示文字
           textSize='14sp';--文字大小
           textColor=副文本色;--文字颜色
-          id='download_text';--设置控件ID
+          id='downloadText';--设置控件ID
           --singleLine=true;--设置单行输入
           --ellipsize='end';--多余文字用省略号显示
           --start 开始 middle 中间 end 结尾
@@ -175,7 +175,7 @@ function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,
           --style='?android:attr/progressBarStyleSmall';--小号风格
           --style='?android:attr/progressBarStyleSmallTitle';--标题型风格
           style='?android:attr/progressBarStyleHorizontal';--长形进度条
-          id='download_progress';--设置控件ID
+          id='downloadProgress';--设置控件ID
           layout_margin='5dp';--控件外边距
           visibility=View.GONE;
         };
@@ -270,7 +270,7 @@ function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,
   dialog.getWindow().setContentView(loadlayout(dialog_layout))
   import"android.graphics.drawable.ColorDrawable"
   dialog.getWindow().setBackgroundDrawable(ColorDrawable(0x00000000));--背景透明
-  dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);--支持输入法
+  dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)--支持输入法
   --dialog.dismiss()--关闭
   --dialog.show()--显示
   cancel.onClick=function()
@@ -282,7 +282,7 @@ function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,
     activity.startActivity(Intent("android.intent.action.VIEW",Uri.parse(下载链接)))
   end
   download.onClick=function()
-    local dir=activity.getSharedData("下载目录")
+    local 下载目录=activity.getSharedData("下载目录")
     if(下载目录:find("/sdcard"))then
       下载目录=下载目录:match("/sdcard(.+)")
     end
@@ -290,8 +290,8 @@ function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,
       下载目录=下载目录:match("/storage/emulated/0(.+)")
     end
     下载监听(下载链接,下载目录,"粼光应用商店_"..最新版本..".apk")
-    download_text.setVisibility(View.VISIBLE)
-    download_progress.setVisibility(View.VISIBLE)
+    downloadText.setVisibility(View.VISIBLE)
+    downloadProgress.setVisibility(View.VISIBLE)
     download.getChildAt(0).setText("下载中")
     download.onClick=function()end
   end
@@ -307,7 +307,7 @@ function 下载监听(url,path,filename)
   import "android.content.Context"
   import "android.net.Uri"
   import "android.service.voice.VoiceInteractionSession$Request"
-  local download_manager=activity.getSystemService(Context.DOWNLOAD_SERVICE)
+  local downloadManager=activity.getSystemService(Context.DOWNLOAD_SERVICE)
   local request=DownloadManager.Request(Uri.parse(url))
   request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)--设置通知栏的显示
   request.setDestinationInExternalPublicDir(path,filename)--设置下载路径
@@ -315,10 +315,10 @@ function 下载监听(url,path,filename)
   request.setTitle(filename)--设置通知栏标题
   request.setDescription("将下载到"..path)--设置通知栏消息
   request.setShowRunningNotification(true)--设置显示下载进度提示
-  local download_id=download_manager.enqueue(request)
-  local download_manager=activity.getSystemService(Context.DOWNLOAD_SERVICE)
+  local downloadId=downloadManager.enqueue(request)
+  local downloadManager=activity.getSystemService(Context.DOWNLOAD_SERVICE)
   local query=DownloadManager.Query()
-  local cursor=download_manager.query(query)
+  local cursor=downloadManager.query(query)
   if(not cursor.moveToFirst())then
     cursor.close()
     return
@@ -326,17 +326,17 @@ function 下载监听(url,path,filename)
   local ti=Ticker()
   ti.Period=10--刷新频率
   ti.onTick=function()
-    local cursor = download_manager.query(query)
+    local cursor = downloadManager.query(query)
     if(not cursor.moveToFirst())then
       cursor.close()
       return
     end
     local id=cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_ID))--下载id
     local status=cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))--下载请求的状态
-    local total_size=cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))--下载文件的总字节大小
-    local downloaded_so_far=cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))--已下载的字节大小
-    local file_name=cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME))--文件名 string类型
-    local file_uri=cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))--下载链接 string类型
+    local totalSize=cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))--下载文件的总字节大小
+    local downloadedSoFar=cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))--已下载的字节大小
+    local fileName=cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME))--文件名 string类型
+    local fileUri=cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))--下载链接 string类型
     local title=cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_TITLE))--下载标题 string类型
     local function 转换(a)
       if(a>=1024*1024 and a<=(1024*1024*1024)-1)then
@@ -353,30 +353,30 @@ function 下载监听(url,path,filename)
       end
       return s
     end
-    if(download_id and download_id==id and total_size and total_size>0)then
+    if(downloadId and downloadId==id and totalSize and totalSize>0)then
       switch status
         --下载暂停
        case DownloadManager.STATUS_PAUSED
         local reason=cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_REASON))
         switch reason
          case DownloadManager.PAUSED_QUEUED_FOR_WIFI
-          reason_name="等待WiFi"
+          reasonName="等待WiFi"
          case DownloadManager.PAUSED_WAITING_FOR_NETWORK
-          reason_name="等待连接"
+          reasonName="等待连接"
          case DownloadManager.PAUSED_WAITING_TO_RETRY
-          reason_name="由于重重原因导致下载暂停，等待重试"
+          reasonName="由于重重原因导致下载暂停，等待重试"
          case DownloadManager.PAUSED_UNKNOWN
-          reason_name="未知问题Unknown"
+          reasonName="未知问题Unknown"
         end
-        download_text.setText("下载暂停，"..reason_name)
+        downloadText.setText("下载暂停，"..reasonName)
         --正在下载
        case DownloadManager.STATUS_RUNNING
-        download_text.setText("已下载"..转换(downloaded_so_far).."，共"..转换(total_size).."，"..string.format('%.2f',(downloaded_so_far/total_size*100)).."%")
-        download_progress.setProgress(tointeger(downloaded_so_far/total_size*100))
+        downloadText.setText("已下载"..转换(downloadedSoFar).."，共"..转换(totalSize).."，"..string.format('%.2f',(downloadedSoFar/totalSize*100)).."%")
+        downloadProgress.setProgress(tointeger(downloadedSoFar/totalSize*100))
         --下载完成
        case DownloadManager.STATUS_SUCCESSFUL
-        download_text.setText("下载完成")
-        download_progress.setProgress(100)
+        downloadText.setText("下载完成")
+        downloadProgress.setProgress(100)
         安装应用(activity.getSharedData("下载目录")..filename)
         download.getChildAt(0).setText("立即安装")
         download.onClick=function()
@@ -389,25 +389,25 @@ function 下载监听(url,path,filename)
         local reason=cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_REASON))
         switch reason
          case DownloadManager.ERROR_CANNOT_RESUME
-          reason_name="不能够继续，由于一些其他原因"
+          reasonName="不能够继续，由于一些其他原因"
          case DownloadManager.ERROR_DEVICE_NOT_FOUND
-          reason_name="外部存储设备没有找到"
+          reasonName="外部存储设备没有找到"
          case DownloadManager.ERROR_FILE_ALREADY_EXISTS
-          reason_name="要下载的文件已经存在了，要想重新下载需要删除原来的文件"
+          reasonName="要下载的文件已经存在了，要想重新下载需要删除原来的文件"
          case DownloadManager.ERROR_FILE_ERROR
-          reason_name="可能由于SD卡原因导致了文件错误"
+          reasonName="可能由于SD卡原因导致了文件错误"
          case DownloadManager.ERROR_HTTP_DATA_ERROR
-          reason_name="在Http传输过程中出现了问题。"
+          reasonName="在Http传输过程中出现了问题。"
          case DownloadManager.ERROR_INSUFFICIENT_SPACE
-          reason_name="由于SD卡空间不足造成的。"
+          reasonName="由于SD卡空间不足造成的。"
          case DownloadManager.ERROR_TOO_MANY_REDIRECTS
-          reason_name="这个Http有太多的重定向，导致无法正常下载"
+          reasonName="这个Http有太多的重定向，导致无法正常下载"
          case DownloadManager.ERROR_UNHANDLED_HTTP_CODE
-          reason_name="无法获取http出错的原因，比如说远程服务器没有响应"
+          reasonName="无法获取http出错的原因，比如说远程服务器没有响应"
          case DownloadManager.ERROR_UNKNOWN
-          reason_name="未知问题Unknown"
+          reasonName="未知问题Unknown"
         end
-        download_text.setText("下载失败，"..reason_name)
+        downloadText.setText("下载失败，"..reasonName)
         cursor.close()
         ti.stop()
       end

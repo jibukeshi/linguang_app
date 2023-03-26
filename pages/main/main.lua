@@ -54,7 +54,7 @@ end
 
 
 --深色模式
-local android_R=luajava.bindClass "android.R"
+local androidR=luajava.bindClass "android.R"
 local systemDarkMode=activity.getSystemService(Context.UI_MODE_SERVICE).getNightMode()==UiModeManager.MODE_NIGHT_YES
 if systemDarkMode~=UiManager.getThemeConfig().isNightMode()
   if systemDarkMode newThemeName="Night.json" else newThemeName="Default_Light.json" end
@@ -63,7 +63,7 @@ if systemDarkMode~=UiManager.getThemeConfig().isNightMode()
   FusionUtil.setNightMode(systemDarkMode)
   activity.finish()
   activity.newActivity(activity.getLoader().getPageName())
-  activity.overridePendingTransition(android_R.anim.fade_in,android_R.anim.fade_out)
+  activity.overridePendingTransition(androidR.anim.fade_in,androidR.anim.fade_out)
 end
 
 
@@ -71,7 +71,7 @@ end
 -- @param recyclerView 侧滑栏列表控件
 -- @param listIndex 点击的列表索引（点击的是第几个列表）
 -- @param clickIndex 点击的项目索引（点击的第几个项目）
-function onDrawerListItemClick(data, recyclerView, listIndex, itemIndex)
+function onDrawerListItemClick(data,recyclerView,listIndex,itemIndex)
   --侧滑栏列表的数据是二维结构，所以需要先获取到点击项目所在列表的数据
   local listData = data.get(listIndex);
   --获取到所在列表的数据后获取点击项目的数据
@@ -108,7 +108,7 @@ end
 
 
 --第一页布局
-page1_layout=--常规框架
+page1Layout=--常规框架
 {
   FrameLayout;--帧布局
   layout_width="fill";--布局宽度
@@ -121,7 +121,7 @@ page1_layout=--常规框架
     gravity="center";--控件内容的重力方向
     --左:left 右:right 中:center 顶:top 底:bottom
     layout_margin="10dp";--控件外边距
-    id="page1_loading";--设置控件ID
+    id="page1Loading";--设置控件ID
     {
       ProgressBar;--进度条控件
       layout_width="wrap";--布局宽度
@@ -135,7 +135,7 @@ page1_layout=--常规框架
       --style="?android:attr/progressBarStyleSmall";--小号风格
       --style="?android:attr/progressBarStyleSmallTitle";--标题型风格
       --style="?android:attr/progressBarStyleHorizontal";--长形进度条
-      id="page1_progress";--设置控件ID
+      id="page1Progress";--设置控件ID
     };
     {
       TextView;--文本控件
@@ -144,7 +144,7 @@ page1_layout=--常规框架
       text="获取中……";--显示文字
       textSize="16sp";--文字大小
       textColor=主文本色;--文字颜色
-      id="page1_message";--设置控件ID
+      id="page1Message";--设置控件ID
       --singleLine=true;--设置单行输入
       --ellipsize="end";--多余文字用省略号显示
       --start 开始 middle 中间 end 结尾
@@ -162,7 +162,7 @@ page1_layout=--常规框架
     layout_height="fill";--布局高度
     verticalScrollBarEnabled=false;--隐藏纵向滑条
     overScrollMode=View.OVER_SCROLL_NEVER,--隐藏圆弧阴影
-    id="page1_normal";--设置控件ID
+    id="page1Normal";--设置控件ID
     {
       LinearLayout;--线性控件
       orientation="vertical";--布局方向
@@ -175,14 +175,14 @@ page1_layout=--常规框架
         ViewPager;--滑动视图
         layout_width="fill";--布局宽度
         layout_height="165dp";--布局高度
-        id="page1_images";--设置控件ID
+        id="page1Images";--设置控件ID
         layout_margin="10dp";--控件外边距
       };
       {
         RecyclerView;
         layout_width="fill";--宽度
         layout_height="fill";--高度
-        id="page1_recycler";
+        id="page1Recycler";
         verticalScrollBarEnabled=false;--隐藏滑条
         overScrollMode=View.OVER_SCROLL_NEVER,--隐藏圆弧阴影
       };
@@ -191,11 +191,11 @@ page1_layout=--常规框架
 };
 
 --添加第一页布局
-UiManager.getFragment(0).view.addView(loadlayout(page1_layout))
+UiManager.getFragment(0).view.addView(loadlayout(page1Layout))
 
 
 --第二页布局，就一个LuaWebView，但是不能用FA2自带的因为有bug
-page2_layout=--常规框架
+page2Layout=--常规框架
 {
   FrameLayout;--帧布局
   layout_width="fill";--布局宽度
@@ -208,7 +208,7 @@ page2_layout=--常规框架
     gravity="center";--控件内容的重力方向
     --左:left 右:right 中:center 顶:top 底:bottom
     layout_margin="10dp";--控件外边距
-    id="page2_loading";--设置控件ID
+    id="page2Loading";--设置控件ID
     {
       ProgressBar;--进度条控件
       layout_width="wrap";--布局宽度
@@ -222,7 +222,7 @@ page2_layout=--常规框架
       --style="?android:attr/progressBarStyleSmall";--小号风格
       --style="?android:attr/progressBarStyleSmallTitle";--标题型风格
       --style="?android:attr/progressBarStyleHorizontal";--长形进度条
-      id="page2_progress";--设置控件ID
+      id="page2Progress";--设置控件ID
     };
     {
       TextView;--文本控件
@@ -231,7 +231,7 @@ page2_layout=--常规框架
       text="获取中……";--显示文字
       textSize="16sp";--文字大小
       textColor=主文本色;--文字颜色
-      id="page2_message";--设置控件ID
+      id="page2Message";--设置控件ID
       --singleLine=true;--设置单行输入
       --ellipsize="end";--多余文字用省略号显示
       --start 开始 middle 中间 end 结尾
@@ -247,17 +247,17 @@ page2_layout=--常规框架
     LuaWebView;--浏览器控件
     layout_width="fill";--浏览器宽度
     layout_height="fill";--浏览器高度
-    id="page2_web";--控件ID
+    id="page2Web";--控件ID
     background=窗体背景色;--控件背景
   };
 };
 
 --添加第二页布局
-UiManager.getFragment(1).view.addView(loadlayout(page2_layout))
+UiManager.getFragment(1).view.addView(loadlayout(page2Layout))
 
 
 --第三页布局
-page3_layout=--常规框架
+page3Layout=--常规框架
 {
   NestedScrollView;--纵向滑动控件
   layout_width="fill";--布局宽度
@@ -344,7 +344,7 @@ page3_layout=--常规框架
             TextView;--文本控件
             layout_width="fill";--控件宽度
             layout_height="wrap";--控件高度
-            text="当前版本："..version_name.."("..version_code..")";--显示文字
+            text="当前版本："..versionName.."("..versionCode..")";--显示文字
             textSize="14sp";--文字大小
             textColor=副文本色;--文字颜色
             --id="Text";--设置控件ID
@@ -376,7 +376,7 @@ page3_layout=--常规框架
         layout_margin="10dp";--卡片边距
         cardElevation="0dp";--卡片阴影
         radius="5dp";--卡片圆角
-        id="page3_tidan";--设置控件ID
+        id="page3Upload";--设置控件ID
         {
           LinearLayout;--线性控件
           orientation="vertical";--布局方向
@@ -442,7 +442,7 @@ page3_layout=--常规框架
         layout_margin="10dp";--卡片边距
         cardElevation="0dp";--卡片阴影
         radius="5dp";--卡片圆角
-        id="page3_xiazai";--设置控件ID
+        id="page3Download";--设置控件ID
         {
           LinearLayout;--线性控件
           orientation="vertical";--布局方向
@@ -515,7 +515,7 @@ page3_layout=--常规框架
         RecyclerView;
         layout_width="fill";--宽度
         layout_height="fill";--高度
-        id="page3_recycler1";
+        id="page3Recycler1";
         verticalScrollBarEnabled=false;--隐藏滑条
         overScrollMode=View.OVER_SCROLL_NEVER,--隐藏圆弧阴影
       };
@@ -534,7 +534,7 @@ page3_layout=--常规框架
         RecyclerView;
         layout_width="fill";--宽度
         layout_height="fill";--高度
-        id="page3_recycler2";
+        id="page3Recycler2";
         verticalScrollBarEnabled=false;--隐藏滑条
         overScrollMode=View.OVER_SCROLL_NEVER,--隐藏圆弧阴影
       };
@@ -543,10 +543,10 @@ page3_layout=--常规框架
 };
 
 --添加第三页布局
-UiManager.getFragment(2).view.addView(loadlayout(page3_layout))
+UiManager.getFragment(2).view.addView(loadlayout(page3Layout))
 
 
-local page1_group=
+local page1Group=
 {
   LinearLayout;--线性控件
   orientation="vertical";--布局方向
@@ -593,7 +593,7 @@ local page1_group=
   };
 };
 
-local page1_app=
+local page1App=
 {
   MaterialCardView;--卡片控件
   layout_width="fill";--卡片宽度
@@ -664,28 +664,28 @@ local page1_app=
 };
 
 --加载布局
-page1_normal.setVisibility(View.GONE)
-page1_images.setVisibility(View.GONE)
-page1_loading.setVisibility(View.VISIBLE)
+page1Normal.setVisibility(View.GONE)
+page1Images.setVisibility(View.GONE)
+page1Loading.setVisibility(View.VISIBLE)
 
 
 --获取首页应用列表
 Http.get(server.."index.json",nil,"UTF-8",nil,function(code,content,cookie,header)
-  if not(activity == nil or activity.isDestroyed() or activity.isFinishing())then--使用Glide加载图片之前需要判断当前activity是否存在
-    if(code==200 and content)then
-      --获取成功
-      page1_normal.setVisibility(View.VISIBLE)
-      page1_loading.setVisibility(View.GONE)
+  if(code==200 and content)then
+    --获取成功
+    xpcall(function()
+      page1Normal.setVisibility(View.VISIBLE)
+      page1Loading.setVisibility(View.GONE)
       --解析json
       local jsontext=json.decode(content)
       --首页分类的适配器
-      local page1_adp=LuaRecyclerAdapter(activity,jsontext.apps,page1_group).setAdapterInterface({
+      local page1Adp=LuaRecyclerAdapter(activity,jsontext.apps,page1Group).setAdapterInterface({
         onBindViewHolder=function(holder,position)
           local view=holder.tag--获取组的view
           local info=jsontext.apps[position+1]--获取组的信息
           view.title.setText(info.name)
           --首页每个应用的适配器
-          local adp=LuaRecyclerAdapter(activity,info.items,page1_app).setAdapterInterface({
+          local adp=LuaRecyclerAdapter(activity,info.items,page1App).setAdapterInterface({
             onBindViewHolder=function(holder2,position2)
               local view2=holder2.tag--获取应用的view
               local info2=jsontext.apps[position+1].items[position2+1]--获取应用的信息
@@ -717,24 +717,23 @@ Http.get(server.."index.json",nil,"UTF-8",nil,function(code,content,cookie,heade
           view.recycler.setAdapter(adp)
         end
       })
-      page1_recycler.setLayoutManager(LinearLayoutManager(activity))
-      page1_recycler.setAdapter(page1_adp)
-
-     else
-      --获取失败
-      page1_progress.setVisibility(View.GONE)
-      page1_message.setText("获取失败 ("..code..")")
-    end
+      page1Recycler.setLayoutManager(LinearLayoutManager(activity))
+      page1Recycler.setAdapter(page1Adp)
+    end,function(error)end)
+   else
+    --获取失败
+    page1Progress.setVisibility(View.GONE)
+    page1Message.setText("获取失败 ("..code..")")
   end
 end)
 
 
 --获取首页轮播图
 Http.get(server.."index.html",nil,"UTF-8",nil,function(code,content,cookie,header)
-  if not(activity == nil or activity.isDestroyed() or activity.isFinishing())then--使用Glide加载图片之前需要判断当前activity是否存在
-    if(code==200 and content)then
-      --获取成功
-      page1_images.setVisibility(View.VISIBLE)
+  if(code==200 and content)then
+    --获取成功
+    xpcall(function()
+      page1Images.setVisibility(View.VISIBLE)
       local list=ArrayList()
       for k in content:match([[轮播图 感谢学神之女(.-)轮播的内容可以是图片]]):gmatch("<img(.-)>") do
         local image=k:match([[src="(.-)"]])--获取图片链接
@@ -747,7 +746,7 @@ Http.get(server.."index.html",nil,"UTF-8",nil,function(code,content,cookie,heade
         if(url and not(url:find("://")))then
           url=server..url
         end
-        local image_layout=
+        local imageLayout=
         {
           MaterialCardView;--卡片控件
           layout_width="fill";--卡片宽度
@@ -772,37 +771,37 @@ Http.get(server.."index.html",nil,"UTF-8",nil,function(code,content,cookie,heade
             layout_gravity="center";--重力
           };
         };
-        list.add(loadlayout(image_layout))
+        list.add(loadlayout(imageLayout))
       end
       local adp=BasePagerAdapter(list)
-      page1_images.setAdapter(adp)
+      page1Images.setAdapter(adp)
       --自动轮播
       local ti=Ticker()
       ti.Period=5000
       ti.onTick=function()
-        if page1_images.getCurrentItem()==adp.getCount()-1 then
+        if page1Images.getCurrentItem()==adp.getCount()-1 then
           --如果已经是最后一张了就显示第一张
-          page1_images.setCurrentItem(0,true)
+          page1Images.setCurrentItem(0,true)
          else
           --否则就显示下一张
-          page1_images.setCurrentItem(page1_images.getCurrentItem()+1,true)
+          page1Images.setCurrentItem(page1Images.getCurrentItem()+1,true)
         end
       end
       ti.start()
-     else
-      --获取失败
-      弹出消息("轮播图获取失败("..code..")")
-    end
+    end,function(error)end)
+   else
+    --获取失败
+    弹出消息("轮播图获取失败("..code..")")
   end
 end)
 
 
 --论坛
-page2_web.loadUrl("https://bwcxlg.top/")
-page2_web.removeView(page2_web.getChildAt(0))--去除进度条
-page2_web.setVisibility(View.INVISIBLE)--将WebView设置为隐藏，能看见下面的加载进度条
-page2_loading.setVisibility(View.VISIBLE)
-page2_web.setWebViewClient({
+page2Web.loadUrl("https://bwcxlg.top/")
+page2Web.removeView(page2Web.getChildAt(0))--去除进度条
+page2Web.setVisibility(View.INVISIBLE)--将WebView设置为隐藏，能看见下面的加载进度条
+page2Loading.setVisibility(View.VISIBLE)
+page2Web.setWebViewClient({
   shouldOverrideUrlLoading=function(view,url)
     --Url即将跳转
     if not(url:find("bwcxlg.top")) then
@@ -816,13 +815,13 @@ page2_web.setWebViewClient({
   end,
   onPageFinished=function(view,url)
     --网页加载完成
-    page2_web.setVisibility(View.VISIBLE)
-    page2_loading.setVisibility(View.GONE)
+    page2Web.setVisibility(View.VISIBLE)
+    page2Loading.setVisibility(View.GONE)
   end
 })
 
 
-local page3_item=
+local page3Item=
 {
   MaterialCardView;--卡片控件
   layout_width="fill";--卡片宽度
@@ -874,7 +873,7 @@ local page3_item=
   };
 };
 
-page3_data1={
+page3Data1={
   {icon=activity.loader.getImagePath("QQ.png"),title="QQ官方一群",click=function()
       xpcall(function()
         local url="mqqapi://card/show_pslcard?card_type=group&uin=424033580"
@@ -916,18 +915,21 @@ page3_data1={
   {icon=activity.loader.getImagePath("favorite"),title="赞助",click=function()
       进入子页面("web",{server.."money/"})
     end},
+  {icon=activity.loader.getImagePath("github.png"),title="github",click=function()
+      进入子页面("web",{"https://github.com/jibukeshi/linguang_app"})
+    end},
 }
-page3_adp1=LuaRecyclerAdapter(activity,page3_data1,page3_item)
-page3_recycler1.setLayoutManager(LinearLayoutManager(activity))
-page3_recycler1.setAdapter(page3_adp1)
-page3_adp1.onItemClick=function(adapter,itemView,view,pos)
-  load(page3_data1[pos+1].click)
+page3Adp1=LuaRecyclerAdapter(activity,page3Data1,page3Item)
+page3Recycler1.setLayoutManager(LinearLayoutManager(activity))
+page3Recycler1.setAdapter(page3Adp1)
+page3Adp1.onItemClick=function(adapter,itemView,view,pos)
+  load(page3Data1[pos+1].click)
 end
 
-page3_data2={
+page3Data2={
   {icon=activity.loader.getImagePath("cloud_upload"),title="检查更新",click=function()
-      Http.get(节点域名.."update.json",nil,"UTF-8",nil,function(code,content,cookie,header)
-        if(code==200 and content)then
+      Http.get(节点域名.."linguang/update.json",nil,"UTF-8",nil,function(code,content,cookie,header)
+        xpcall(function()
           local jsontext=json.decode(content)
           local version=jsontext.version
           local versioncode=jsontext.versioncode
@@ -935,18 +937,18 @@ page3_data2={
           local size=jsontext.size
           local data=jsontext.data
           local url=jsontext.url
-          if(versioncode>version_code)then
-            更新弹窗(version_name,version_code,version,versioncode,date,size,data,url)
+          if(versioncode>versionCode)then
+            更新弹窗(versionName,versionCode,version,versioncode,date,size,data,url)
            else
             弹出消息("当前已是最新版本")
           end
-         else
+        end,function(error)
           弹出消息("检查更新失败("..code..")")
-        end
+        end)
       end)
     end},
   {icon=activity.loader.getImagePath("update"),title="历史更新",click=function()
-      进入子页面("web",{节点域名.."history.html"})
+      进入子页面("web",{节点域名.."/linguang/history.html"})
     end},
   {icon=activity.loader.getImagePath("person"),title="联系作者",click=function()
       xpcall(function()
@@ -963,17 +965,17 @@ page3_data2={
       进入子页面("settings")
     end},
 }
-page3_adp2=LuaRecyclerAdapter(activity,page3_data2,page3_item)
-page3_recycler2.setLayoutManager(LinearLayoutManager(activity))
-page3_recycler2.setAdapter(page3_adp2)
-page3_adp2.onItemClick=function(adapter,itemView,view,pos)
-  load(page3_data2[pos+1].click)
+page3Adp2=LuaRecyclerAdapter(activity,page3Data2,page3Item)
+page3Recycler2.setLayoutManager(LinearLayoutManager(activity))
+page3Recycler2.setAdapter(page3Adp2)
+page3Adp2.onItemClick=function(adapter,itemView,view,pos)
+  load(page3Data2[pos+1].click)
 end
 
-page3_tidan.onClick=function()
+page3Upload.onClick=function()
   进入子页面("web",{"https://jinshuju.net/f/vcoCgZ"})
 end
-page3_xiazai.onClick=function()
+page3Download.onClick=function()
   进入子页面("download")
 end
 
@@ -1025,9 +1027,9 @@ end
 
 
 --自动更新
-节点列表={"http://linguang.weibox.eu.org/","https://storetest.weibox.eu.org/"}
+节点列表={"https://weibox.ml/","https://weibox.cf/","https://weibox.eu.org/"}
 function 自动更新(选择)
-  Http.get(节点列表[选择].."update.json",nil,"UTF-8",nil,function(code,content,cookie,header)
+  Http.get(节点列表[选择].."linguang/update.json",nil,"UTF-8",nil,function(code,content,cookie,header)
     if(code==200 and content)then
       节点域名=节点列表[选择]
       local jsontext=json.decode(content)
@@ -1037,8 +1039,8 @@ function 自动更新(选择)
       local size=jsontext.size
       local data=jsontext.data
       local url=jsontext.url
-      if(activity.getSharedData("自动更新") and versioncode>version_code)then
-        更新弹窗(version_name,version_code,version,versioncode,date,size,data,url)
+      if(activity.getSharedData("自动更新") and versioncode>versionCode)then
+        更新弹窗(versionName,versionCode,version,versioncode,date,size,data,url)
       end
      else
       if(选择~=#节点列表)then
