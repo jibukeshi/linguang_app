@@ -103,72 +103,72 @@ adp=LuaRecyclerAdapter(activity,item).setClickViewId("card")
 recycler.setLayoutManager(LinearLayoutManager(activity))
 recycler.setAdapter(adp)
 
-external_files_dir=activity.getExternalFilesDir(nil).toString()--获取外部数据目录
-external_chche_dir=activity.getExternalCacheDir().toString()--获取外部缓存目录
-data_dir=activity.getDataDir().toString()--获取数据目录
+ExternalFilesDir=activity.getExternalFilesDir(nil).toString()--获取外部数据目录
+ExternalCacheDir=activity.getExternalCacheDir().toString()--获取外部缓存目录
+DataDir=activity.getDataDir().toString()--获取数据目录
 
 data={
-  {title="应用崩溃记录",dir=external_files_dir.."/crash"},
-  {title="SVG 图片缓存",dir=external_files_dir.."/svg"},
-  {title="Glide 图片加载缓存",dir=data_dir.."/cache/image_manager_disk_cache"},
-  {title="WebView 存储数据",dir=data_dir.."/app_webview"},
-  {title="WebView 缓存信息",dir=data_dir.."/cache/WebView"},
-  {title="其他缓存",dir=external_chche_dir},
+  {title="应用崩溃记录",dir=ExternalFilesDir.."/crash"},
+  {title="SVG 图片缓存",dir=ExternalFilesDir.."/svg"},
+  {title="Glide 图片加载缓存",dir=DataDir.."/cache/image_manager_disk_cache"},
+  {title="WebView 存储数据",dir=DataDir.."/app_webview"},
+  {title="WebView 缓存信息",dir=DataDir.."/cache/WebView"},
+  {title="其他缓存",dir=ExternalCacheDir},
 }
 
 
-function get_dir_size(dir)--获取目录的大小
+function GetDirSize(dir)--获取目录的大小
   local size=0
-  local list_file=File(dir).listFiles()--列出所有子项
-  if(list_file)then--如果子项存在
-    for k,v in ipairs(luajava.astable(list_file)) do
-      if(v.isDirectory())then
+  local listFile=File(dir).listFiles()--列出所有子项
+  if(listFile)then--如果子项存在
+    for key,value in ipairs(luajava.astable(listFile)) do
+      if(value.isDirectory())then
         --如果子项是文件夹就递归获取大小
-        size=size+get_dir_size(v.toString())
+        size=size+GetDirSize(value.toString())
        else
         --如果子项是文件就加上它的大小
-        size=size+v.length()
+        size=size+value.length()
       end
     end
   end
   return size
 end
 
-function delete_dir(dir)--删除目录
+function DeleteDir(dir)--删除目录
   local file=File(dir)
-  local list_file=file.listFiles()--列出所有子项
-  if(list_file)then--如果子项存在
-    for k,v in ipairs(luajava.astable(list_file)) do
-      if(v.isDirectory())then
+  local listFile=file.listFiles()--列出所有子项
+  if(listFile)then--如果子项存在
+    for key,value in ipairs(luajava.astable(listFile)) do
+      if(value.isDirectory())then
         --如果子项是文件夹就递归删除
-        delete_dir(v.toString())
+        DeleteDir(value.toString())
        else
         --如果子项是文件就直接删除
-        v.delete()
+        value.delete()
       end
     end
   end
 end
 
 
-function update_cache_list()
+function UpdateCacheList()
   --更新RecyclerView
   adp.clear()
-  for k,v in ipairs(data)
-    local size=Formatter.formatFileSize(activity,get_dir_size(v.dir))
-    adp.add{check=v.title.."（"..size.."）"}
+  for key,value in ipairs(data)
+    local size=Formatter.formatFileSize(activity,GetDirSize(value.dir))
+    adp.add{check=value.title.."（"..size.."）"}
   end
 end
-update_cache_list()
+UpdateCacheList()
 
-adp.onItemClick=function(adapter,item_view,view,pos)
+adp.onItemClick=function(adapter,itemView,view,pos)
   local check=view.getChildAt(0)
   check.setChecked(not check.checked)
   local size=0
   for i=0,adp.getItemCount()-1 do
     local check2=recycler.getChildAt(i).getChildAt(0)
     if(check2.checked)then
-      local current=get_dir_size(data[i+1].dir)
+      local current=GetDirSize(data[i+1].dir)
       size=size+current
     end
   end
@@ -180,10 +180,10 @@ clean.onClick=function()
     local check=recycler.getChildAt(i).getChildAt(0)
     if(check.checked)then
       --如果勾选了就清理
-      delete_dir(data[i+1].dir)
+      DeleteDir(data[i+1].dir)
       check.setChecked(false)--清理完成，把勾取消
     end
   end
-  update_cache_list()
+  UpdateCacheList()
   clean.setText("确定清理（0B）")
 end
