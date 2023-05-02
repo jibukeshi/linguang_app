@@ -22,7 +22,7 @@ windowBackground=Colors.getWindowBackground()--窗体背景色
 
 
 --获取主页面传递过来的链接
-url="https://v1.m/"
+url=...
 
 if(url:find("cdn.bwcxlg.top/apps/") or url:find("cdn.bwcxlg.top//apps/"))then
   activity.newActivity("app",{url:match("cdn.bwcxlg.top/(.+)")})
@@ -141,20 +141,6 @@ webView.setWebViewClient(luajava.override(WebViewClient,{
   end,
   onReceivedHttpError=function(superCall,view,webResourceRequest,webResourceResponse)
     --请求返回HTTP错误码时
---只考虑网页主请求
-      if webResourceRequest.isForMainFrame() then
-        --以下错误页布局仅在FA2中有效，其他编辑器请自行更换页面
-        errStatus = webResourceResponse.getStatusCode()
-        local errPage = luajava.bindClass"net.fusionapp.core.R".layout.web_error_page
-        local inflater = luajava.bindClass "android.view.LayoutInflater".from(activity)
-        errView = inflater.inflate(errPage, nil)
-        view.getParent().addView(errView)
-        errView.setBackgroundColor(luajava.bindClass "android.graphics.Color".parseColor("#ffffff"))
-        errView.setOnClickListener(function()
-          errStatus = nil
-          view.reload()
-        end)
-      end
   end,
   onReceivedError=function(superCall,view,webResourceRequest,webResourceError)
     --页面加载异常事件
