@@ -17,7 +17,7 @@ function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,
       MaterialCardView;--卡片控件
       layout_width='85%w';--卡片宽度
       layout_height='fill';--卡片高度
-      cardBackgroundColor=窗体背景色;--卡片颜色
+      cardBackgroundColor=windowBackground;--卡片颜色
       layout_margin='0dp';--卡片边距
       cardElevation='0dp';--卡片阴影
       radius='5dp';--卡片圆角
@@ -35,7 +35,7 @@ function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,
           layout_height='wrap';--控件高度
           text='发现新版本';--显示文字
           textSize='20sp';--文字大小
-          textColor=强调色;--文字颜色
+          textColor=colorAccent;--文字颜色
           --id='Text';--设置控件ID
           --singleLine=true;--设置单行输入
           --ellipsize='end';--多余文字用省略号显示
@@ -58,7 +58,7 @@ function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,
             layout_height='wrap';--控件高度
             text="当前版本："..当前版本.."("..当前版本号..")";--显示文字
             textSize='14sp';--文字大小
-            textColor=主文本色;--文字颜色
+            textColor=textColorPrimary;--文字颜色
             --id='Text';--设置控件ID
             --singleLine=true;--设置单行输入
             --ellipsize='end';--多余文字用省略号显示
@@ -76,7 +76,7 @@ function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,
             layout_height='wrap';--控件高度
             text="最新版本："..最新版本.."("..最新版本号..")";--显示文字
             textSize='14sp';--文字大小
-            textColor=主文本色;--文字颜色
+            textColor=textColorPrimary;--文字颜色
             --id='Text';--设置控件ID
             --singleLine=true;--设置单行输入
             --ellipsize='end';--多余文字用省略号显示
@@ -95,7 +95,7 @@ function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,
           layout_height='wrap';--控件高度
           text="更新日期："..更新日期;--显示文字
           textSize='14sp';--文字大小
-          textColor=副文本色;--文字颜色
+          textColor=textColorSecondary;--文字颜色
           --id='Text';--设置控件ID
           --singleLine=true;--设置单行输入
           --ellipsize='end';--多余文字用省略号显示
@@ -113,7 +113,7 @@ function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,
           layout_height='wrap';--控件高度
           text="安装包大小："..安装包大小;--显示文字
           textSize='14sp';--文字大小
-          textColor=副文本色;--文字颜色
+          textColor=textColorSecondary;--文字颜色
           --id='Text';--设置控件ID
           --singleLine=true;--设置单行输入
           --ellipsize='end';--多余文字用省略号显示
@@ -131,7 +131,7 @@ function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,
           layout_height='wrap';--控件高度
           text='更新内容：\n'..更新日志;--显示文字
           textSize='15sp';--文字大小
-          textColor=主文本色;--文字颜色
+          textColor=textColorPrimary;--文字颜色
           --id='Text';--设置控件ID
           --singleLine=true;--设置单行输入
           --ellipsize='end';--多余文字用省略号显示
@@ -149,7 +149,7 @@ function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,
           layout_height='wrap';--控件高度
           text='';--显示文字
           textSize='14sp';--文字大小
-          textColor=副文本色;--文字颜色
+          textColor=textColorSecondary;--文字颜色
           id='downloadText';--设置控件ID
           --singleLine=true;--设置单行输入
           --ellipsize='end';--多余文字用省略号显示
@@ -192,7 +192,7 @@ function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,
             layout_height='wrap';--控件高度
             text='取消';--显示文字
             textSize='14sp';--文字大小
-            textColor=副文本色;--文字颜色
+            textColor=textColorSecondary;--文字颜色
             id='cancel';--设置控件ID
             singleLine=true;--设置单行输入
             --ellipsize='end';--多余文字用省略号显示
@@ -219,7 +219,7 @@ function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,
               layout_height='fill';--控件高度
               text='浏览器下载';--显示文字
               textSize='14sp';--文字大小
-              textColor=主文本色;--文字颜色
+              textColor=textColorPrimary;--文字颜色
               --id='Text';--设置控件ID
               singleLine=true;--设置单行输入
               --ellipsize='end';--多余文字用省略号显示
@@ -236,7 +236,7 @@ function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,
             MaterialCardView;--卡片控件
             layout_width='30%w';--卡片宽度
             layout_height='wrap';--卡片高度
-            cardBackgroundColor=强调色;--卡片颜色
+            cardBackgroundColor=colorAccent;--卡片颜色
             layout_margin='7dp';--卡片边距
             cardElevation='0dp';--卡片阴影
             radius='5dp';--卡片圆角
@@ -247,7 +247,7 @@ function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,
               layout_height='fill';--控件高度
               text='立即更新';--显示文字
               textSize='14sp';--文字大小
-              textColor=主色;--文字颜色
+              textColor=colorPrimary;--文字颜色
               --id='Text';--设置控件ID
               singleLine=true;--设置单行输入
               --ellipsize='end';--多余文字用省略号显示
@@ -264,7 +264,7 @@ function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,
       };
     };
   };
-  local dialog=AlertDialog.Builder(this).show()
+  local dialog=MaterialAlertDialogBuilder(activity).show()
   --dialog.setCancelable(false)--禁用返回键
   dialog.setCanceledOnTouchOutside(false)
   dialog.getWindow().setContentView(loadlayout(dialog_layout))
