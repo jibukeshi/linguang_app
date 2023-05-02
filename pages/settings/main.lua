@@ -8,17 +8,18 @@ import "com.google.android.material.switchmaterial.SwitchMaterial"
 import "com.google.android.material.textfield.*"
 import "androidx.recyclerview.widget.*"
 import "android.graphics.Typeface"
+import"com.google.android.material.dialog.MaterialAlertDialogBuilder"
 
 UiManager=activity.UiManager
 Colors=UiManager.Colors
 
 
 --颜色配置
-强调色=Colors.getColorAccent()
-主色=Colors.getColorPrimary()
-主文本色=Colors.getTextColorPrimary()
-副文本色=Colors.getTextColorSecondary()
-窗体背景色=Colors.getWindowBackground()
+colorAccent=Colors.getColorAccent()--强调色
+colorPrimary=Colors.getColorPrimary()--主色
+textColorPrimary=Colors.getTextColorPrimary()--主文本色
+textColorSecondary=Colors.getTextColorSecondary()--副文本色
+windowBackground=Colors.getWindowBackground()--窗体背景色
 
 
 layout=
@@ -56,7 +57,7 @@ function add(index)
         layout_height="wrap";--控件高度
         text=data[index].title;--显示文字
         textSize="14sp";--文字大小
-        textColor=强调色;--文字颜色
+        textColor=colorAccent;--文字颜色
         --id="Text";--设置控件ID
         --singleLine=true;--设置单行输入
         --ellipsize="end";--多余文字用省略号显示
@@ -75,7 +76,7 @@ function add(index)
       MaterialCardView;--卡片控件
       layout_width="fill";--卡片宽度
       layout_height="wrap";--卡片高度
-      cardBackgroundColor=窗体背景色;--卡片颜色
+      cardBackgroundColor=windowBackground;--卡片颜色
       cardElevation="0dp";--卡片阴影
       radius="5dp";--卡片圆角
       onClick=data[index].click;
@@ -93,7 +94,7 @@ function add(index)
           layout_height="25dp";--图片高度
           src=data[index].icon;--图片路径
           --id="Image";--设置控件ID
-          ColorFilter=强调色;--图片着色
+          ColorFilter=colorAccent;--图片着色
           --ColorFilter=Color.BLUE;--设置图片着色
           scaleType="fitXY";--图片拉伸
           layout_gravity="center";--重力
@@ -105,7 +106,7 @@ function add(index)
           layout_height="wrap";--控件高度
           text=data[index].title;--显示文字
           textSize="16sp";--文字大小
-          textColor=主文本色;--文字颜色
+          textColor=textColorPrimary;--文字颜色
           --id="Text";--设置控件ID
           --singleLine=true;--设置单行输入
           --ellipsize="end";--多余文字用省略号显示
@@ -144,7 +145,7 @@ function add(index)
       MaterialCardView;--卡片控件
       layout_width="fill";--卡片宽度
       layout_height="wrap";--卡片高度
-      cardBackgroundColor=窗体背景色;--卡片颜色
+      cardBackgroundColor=windowBackground;--卡片颜色
       cardElevation="0dp";--卡片阴影
       radius="5dp";--卡片圆角
       onClick=data[index].click;
@@ -162,7 +163,7 @@ function add(index)
           layout_height="25dp";--图片高度
           src=data[index].icon;--图片路径
           --id="Image";--设置控件ID
-          ColorFilter=强调色;--图片着色
+          ColorFilter=colorAccent;--图片着色
           --ColorFilter=Color.BLUE;--设置图片着色
           scaleType="fitXY";--图片拉伸
           layout_gravity="center";--重力
@@ -174,7 +175,7 @@ function add(index)
           layout_height="wrap";--控件高度
           text=data[index].title;--显示文字
           textSize="16sp";--文字大小
-          textColor=主文本色;--文字颜色
+          textColor=textColorPrimary;--文字颜色
           --id="Text";--设置控件ID
           --singleLine=true;--设置单行输入
           --ellipsize="end";--多余文字用省略号显示
@@ -200,7 +201,7 @@ function add(index)
         layout_width="fill";--分割线宽度
         layout_height="2px";--分割线厚度
         layout_gravity="center";--高度居中
-        backgroundColor=副文本色;--分割线颜色
+        backgroundColor=textColorSecondary;--分割线颜色
         layout_marginTop="10dp";--布局顶距
         layout_marginBottom="10dp";--布局底距
       };
@@ -211,18 +212,36 @@ end
 
 data={
   {viewType=1,title="基本设置"},
-  {viewType=2,title="启动时检查更新",icon="cloud_upload",check=activity.getSharedData("自动更新"),click=function()
-      activity.setSharedData("自动更新",not(activity.getSharedData("自动更新")))
-      main.getChildAt(1).getChildAt(0).getChildAt(2).checked=activity.getSharedData("自动更新")
+  {viewType=2,title="启动时检查更新",icon="cloud_upload",check=activity.getSharedData("autoUpdate"),click=function()
+      activity.setSharedData("autoUpdate",not(activity.getSharedData("autoUpdate")))
+      check2.checked=activity.getSharedData("autoUpdate")
+    end},
+  {viewType=2,title="退出时弹窗确认",icon="exit_to_app",check=activity.getSharedData("exitConfirm"),click=function()
+      activity.setSharedData("exitConfirm",not(activity.getSharedData("exitConfirm")))
+      check3.checked=activity.getSharedData("exitConfirm")
+    end},
+  {viewType=3,title="启动默认页面",icon="home",click=function()
+      local items={"首页","社区","我的"}
+      local choose=activity.getSharedData("homePage")
+      local dialog=MaterialAlertDialogBuilder(activity)
+      .setTitle("深色模式切换")
+      .setSingleChoiceItems(items,choose,{onClick=function(v,p)
+          choose=p
+        end})
+      .setPositiveButton("确定",function()
+        activity.setSharedData("homePage",choose)
+      end)
+      .setNegativeButton("取消",nil)
+      .show()
     end},
   {viewType=4},
   {viewType=1,title="下载安装"},
-  {viewType=2,title="下载完成后自动安装",icon="move_to_inbox",check=activity.getSharedData("自动安装"),click=function()
-      activity.setSharedData("自动安装",not(activity.getSharedData("自动安装")))
-      main.getChildAt(4).getChildAt(0).getChildAt(2).checked=activity.getSharedData("自动安装")
+  {viewType=2,title="下载完成后自动安装",icon="move_to_inbox",check=activity.getSharedData("autoInstall"),click=function()
+      activity.setSharedData("autoInstall",not(activity.getSharedData("autoInstall")))
+      check7.checked=activity.getSharedData("autoInstall")
     end},
   {viewType=3,title="下载目录",icon="file_download",click=function()
-      local dialog=AlertDialog.Builder(this)
+      local dialog=MaterialAlertDialogBuilder(activity)
       .setTitle("下载目录")
       .setView(loadlayout(
       {
@@ -246,22 +265,22 @@ data={
             layout_width="fill";--控件宽度
             layout_height="fill";--控件高度
             id="edit";--设置控件ID
-            text=activity.getSharedData("下载目录");--显示文字
+            text=activity.getSharedData("downloadPath");--显示文字
             textSize="16sp";--本文大小
-            textColor=主文本色;--本文颜色
+            textColor=textColorPrimary;--本文颜色
             singleLine=true;--设置单行输入，禁止换行
           };
         };
       }
       ))
       .setPositiveButton("确定",function()
-        activity.setSharedData("下载目录",edit.text)
+        activity.setSharedData("downloadPath",edit.text)
       end)
       .setNegativeButton("取消",nil)
       .show()
     end},
   {viewType=3,title="图片下载目录",icon="image",click=function()
-      local dialog=AlertDialog.Builder(this)
+      local dialog=MaterialAlertDialogBuilder(activity)
       .setTitle("图片下载目录")
       .setView(loadlayout(
       {
@@ -285,16 +304,16 @@ data={
             layout_width="fill";--控件宽度
             layout_height="fill";--控件高度
             id="edit";--设置控件ID
-            text=activity.getSharedData("图片下载目录");--显示文字
+            text=activity.getSharedData("imagePath");--显示文字
             textSize="16sp";--本文大小
-            textColor=主文本色;--本文颜色
+            textColor=textColorPrimary;--本文颜色
             singleLine=true;--设置单行输入，禁止换行
           };
         };
       }
       ))
       .setPositiveButton("确定",function()
-        activity.setSharedData("图片下载目录",edit.text)
+        activity.setSharedData("imagePath",edit.text)
       end)
       .setNegativeButton("取消",nil)
       .show()
@@ -302,10 +321,9 @@ data={
   {viewType=4},
   {viewType=1,title="更多设置"},
   {viewType=3,title="清理缓存",icon="delete",click=function()
-      进入子页面("clean")
+      activity.newActivity("clean")
     end},
 }
-
 
 for i=1,#data do
   add(i)
