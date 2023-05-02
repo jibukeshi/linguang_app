@@ -12,11 +12,11 @@ Colors=UiManager.Colors
 
 
 --颜色配置
-强调色=Colors.getColorAccent()
-主色=Colors.getColorPrimary()
-主文本色=Colors.getTextColorPrimary()
-副文本色=Colors.getTextColorSecondary()
-窗体背景色=Colors.getWindowBackground()
+colorAccent=Colors.getColorAccent()--强调色
+colorPrimary=Colors.getColorPrimary()--主色
+textColorPrimary=Colors.getTextColorPrimary()--主文本色
+textColorSecondary=Colors.getTextColorSecondary()--副文本色
+windowBackground=Colors.getWindowBackground()--窗体背景色
 
 
 layout=
@@ -42,7 +42,7 @@ layout=
     layout_height="wrap";--控件高度
     text="当前版本使用系统下载管理";--显示文字
     textSize="18sp";--文字大小
-    textColor=主文本色;--文字颜色
+    textColor=textColorPrimary;--文字颜色
     --id="Text";--设置控件ID
     --singleLine=true;--设置单行输入
     --ellipsize="end";--多余文字用省略号显示
@@ -60,7 +60,7 @@ layout=
     layout_height="wrap";--控件高度
     text="请前往系统下载管理器";--显示文字
     textSize="14sp";--文字大小
-    textColor=副文本色;--文字颜色
+    textColor=textColorSecondary;--文字颜色
     --id="Text";--设置控件ID
     --singleLine=true;--设置单行输入
     --ellipsize="end";--多余文字用省略号显示
@@ -101,7 +101,7 @@ item=
       layout_height="wrap";--控件高度
       text="";--显示文字
       textSize="16sp";--文字大小
-      textColor=主文本色;--文字颜色
+      textColor=textColorPrimary;--文字颜色
       id="title";--设置控件ID
       --singleLine=true;--设置单行输入
       --ellipsize="end";--多余文字用省略号显示
@@ -119,7 +119,7 @@ item=
       layout_height="wrap";--控件高度
       text="";--显示文字
       textSize="12sp";--文字大小
-      textColor=副文本色;--文字颜色
+      textColor=textColorSecondary;--文字颜色
       id="subtitle";--设置控件ID
       --singleLine=true;--设置单行输入
       --ellipsize="end";--多余文字用省略号显示
@@ -136,7 +136,7 @@ item=
     MaterialCardView;--卡片控件
     layout_width="wrap";--卡片宽度
     layout_height="wrap";--卡片高度
-    cardBackgroundColor=窗体背景色;--卡片颜色
+    cardBackgroundColor=windowBackground;--卡片颜色
     cardElevation="0dp";--卡片阴影
     radius="5dp";--卡片圆角
     id="delete";--设置控件ID
@@ -146,7 +146,7 @@ item=
       layout_height="wrap";--控件高度
       text="删除";--显示文字
       textSize="14sp";--文字大小
-      textColor=副文本色;--文字颜色
+      textColor=textColorSecondary;--文字颜色
       --id="Text";--设置控件ID
       --singleLine=true;--设置单行输入
       --ellipsize="end";--多余文字用省略号显示
@@ -167,7 +167,7 @@ item=
     textSize="15sp";--文字大小
     textColor=卡片色;--文字颜色
     id="install";--设置控件ID
-    backgroundColor=强调色;--背景颜色
+    backgroundColor=colorAccent;--背景颜色
     gravity="center";--重力
     --左:left 右:right 中:center 顶:top 底:bottom
   };
