@@ -19,15 +19,15 @@ Colors=UiManager.Colors
 
 
 --颜色配置
-强调色=Colors.getColorAccent()
-主色=Colors.getColorPrimary()
-主文本色=Colors.getTextColorPrimary()
-副文本色=Colors.getTextColorSecondary()
-窗体背景色=Colors.getWindowBackground()
+colorAccent=Colors.getColorAccent()--强调色
+colorPrimary=Colors.getColorPrimary()--主色
+textColorPrimary=Colors.getTextColorPrimary()--主文本色
+textColorSecondary=Colors.getTextColorSecondary()--副文本色
+windowBackground=Colors.getWindowBackground()--窗体背景色
 
 
 --服务器配置
-server="https://linguang.top/"
+server="https://cdn.bwcxlg.top/"
 
 
 layout=--常规框架
@@ -65,7 +65,7 @@ layout=--常规框架
       layout_height="wrap";--控件高度
       text="获取中……";--显示文字
       textSize="16sp";--文字大小
-      textColor=主文本色;--文字颜色
+      textColor=textColorPrimary;--文字颜色
       id="message";--设置控件ID
       --singleLine=true;--设置单行输入
       --ellipsize="end";--多余文字用省略号显示
@@ -98,7 +98,7 @@ item=
   MaterialCardView;--卡片控件
   layout_width="fill";--卡片宽度
   layout_height="wrap";--卡片高度
-  cardBackgroundColor=窗体背景色;--卡片颜色
+  cardBackgroundColor=windowBackground;--卡片颜色
   cardElevation="0dp";--卡片阴影
   radius="5dp";--卡片圆角
   id="card";--设置控件ID
@@ -114,7 +114,7 @@ item=
       MaterialCardView;--卡片控件
       layout_width="60dp";--卡片宽度
       layout_height="60dp";--卡片高度
-      cardBackgroundColor=主色;--卡片颜色
+      cardBackgroundColor=colorPrimary;--卡片颜色
       layout_margin="5dp";--卡片边距
       cardElevation="2dp";--卡片阴影
       radius="5dp";--卡片圆角
@@ -148,7 +148,7 @@ item=
       layout_height="wrap";--控件高度
       text="";--显示文字
       textSize="14sp";--文字大小
-      textColor=主文本色;--文字颜色
+      textColor=textColorPrimary;--文字颜色
       id="name";--设置控件ID
       --singleLine=true;--设置单行输入
       --ellipsize="end";--多余文字用省略号显示
@@ -186,7 +186,7 @@ adp=LuaRecyclerAdapter(activity,data,item).setAdapterInterface({
       Glide.with(activity).load(server..data[position+1].img).into(view.icon)
     end
     view.card.onClick=function()
-      进入子页面("app",{data[position+1].url})
+      activity.newActivity("app",{data[position+1].url})
     end
   end
 })
@@ -199,8 +199,7 @@ loading.setVisibility(View.VISIBLE)
 
 
 Http.get(server.."index.json",nil,"UTF-8",nil,function(code,content,cookie,header)
-  if(code==200 and content)then
-    --获取成功
+  xpcall(function()
     recycler.setVisibility(View.VISIBLE)
     loading.setVisibility(View.GONE)
     --解析json
@@ -218,12 +217,10 @@ Http.get(server.."index.json",nil,"UTF-8",nil,function(code,content,cookie,heade
       end
     end
     adp.notifyDataSetChanged()
-
-   else
-    --获取失败
+  end,function(e)
     progress.setVisibility(View.GONE)
     message.setText("获取失败 ("..code..")")
-  end
+  end)
 end)
 
 -- @param keyword 搜索栏输入的文本
