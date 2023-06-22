@@ -194,34 +194,43 @@ recycler.setLayoutManager(GridLayoutManager(activity,4))
 recycler.setAdapter(adp)
 
 
-recycler.setVisibility(View.GONE)
-loading.setVisibility(View.VISIBLE)
-
-
-Http.get(server.."index.json",nil,"UTF-8",nil,function(code,content,cookie,header)
-  xpcall(function()
-    recycler.setVisibility(View.VISIBLE)
-    loading.setVisibility(View.GONE)
-    --解析json
-    jsontext=json.decode(content)
-    for i=1,#jsontext.apps do
-      --热门应用会有重复，不要加载
-      if not(jsontext.apps[i].name=="热门应用")then
-        for j=1,#jsontext.apps[i].items do
-          table.insert(data,{
-            name=jsontext.apps[i].items[j].name,
-            url=jsontext.apps[i].items[j].url,
-            img=jsontext.apps[i].items[j].img
-          })
+function Get()
+  --开始获取
+  recycler.setVisibility(View.GONE)
+  loading.setVisibility(View.VISIBLE)
+  progress.setVisibility(View.VISIBLE)
+  message.setText("获取中……").onClick=function()end
+  Http.get(server.."index.json",nil,"UTF-8",nil,function(code,content,cookie,header)
+    if(code==200 and content)then
+      --获取成功
+      recycler.setVisibility(View.VISIBLE)
+      loading.setVisibility(View.GONE)
+      --解析json
+      jsontext=json.decode(content)
+      for i=1,#jsontext.apps do
+        --热门应用会有重复，不要加载
+        if not(jsontext.apps[i].name=="热门应用")then
+          for j=1,#jsontext.apps[i].items do
+            table.insert(data,{
+              name=jsontext.apps[i].items[j].name,
+              url=jsontext.apps[i].items[j].url,
+              img=jsontext.apps[i].items[j].img
+            })
+          end
         end
       end
+      adp.notifyDataSetChanged()
+     else
+      --获取失败
+      progress.setVisibility(View.GONE)
+      message.setText("获取失败 ("..code..")").onClick=function()
+        Get()
+      end
     end
-    adp.notifyDataSetChanged()
-  end,function(e)
-    progress.setVisibility(View.GONE)
-    message.setText("获取失败 ("..code..")")
   end)
-end)
+end
+
+Get()
 
 -- @param keyword 搜索栏输入的文本
 -- @description 顶栏搜索功能回调事件
