@@ -1,3 +1,11 @@
+import "com.google.android.material.card.MaterialCardView"
+import "androidx.core.widget.NestedScrollView"
+import "androidx.viewpager.widget.ViewPager"
+import "androidx.recyclerview.widget.*"
+import "com.androlua.LuaRecyclerAdapter"
+import "com.bumptech.glide.*"
+import "com.caverock.androidsvg.SVGImageView"
+
 --第一页布局
 page1Layout=--常规框架
 {
@@ -202,65 +210,71 @@ local page1App=
   };
 };
 
---加载布局
-page1Normal.setVisibility(View.GONE)
-page1Images.setVisibility(View.GONE)
-page1Loading.setVisibility(View.VISIBLE)
 
-
---获取首页应用列表
-Http.get(server.."index.json",nil,"UTF-8",nil,function(code,content,cookie,header)
-  xpcall(function()
-    page1Normal.setVisibility(View.VISIBLE)
-    page1Loading.setVisibility(View.GONE)
-    --解析json
-    local jsontext=json.decode(content)
-    --首页分类的适配器
-    local page1Adp=LuaRecyclerAdapter(activity,jsontext.apps,page1Group).setAdapterInterface({
-      onBindViewHolder=function(holder,position)
-        local groupView=holder.tag--获取组的view
-        local groupInfo=jsontext.apps[position+1]--获取组的信息
-        groupView.title.setText(groupInfo.name)
-        --首页每个应用的适配器
-        local adp=LuaRecyclerAdapter(activity,groupInfo.items,page1App).setAdapterInterface({
-          onBindViewHolder=function(holder2,position2)
-            local appView=holder2.tag--获取应用的view
-            local appInfo=jsontext.apps[position+1].items[position2+1]--获取应用的信息
-            appView.name.setText(appInfo.name)
-            --判断应用图标是不是svg
-            if(appInfo.img:find".svg")then
-              --如果是svg，判断是否有缓存
-              local file=activity.getExternalFilesDir(nil).toString().."/svg/"..appInfo.name..".svg"
-              if(File(file).exists())then
-                --如果已经缓存过了，就直接加载
-                appView.svg.setImageURI(Uri.fromFile(File(file)))
-               else
-                --如果没有缓存，就先缓存
-                Http.download(server..appInfo.img,file,function(a)
-                  --缓存完毕，加载图片
+function Get()--获取首页应用列表
+  page1Normal.setVisibility(View.GONE)
+  page1Images.setVisibility(View.GONE)
+  page1Loading.setVisibility(View.VISIBLE)
+  page1Message.setText("获取中……").onClick=function()end
+  Http.get(server.."index.json",nil,"UTF-8",nil,function(code,content,cookie,header)
+    if(code==200 and content)then
+      --获取成功
+      page1Normal.setVisibility(View.VISIBLE)
+      page1Loading.setVisibility(View.GONE)
+      --解析json
+      local jsontext=json.decode(content)
+      --首页分类的适配器
+      local page1Adp=LuaRecyclerAdapter(activity,jsontext.apps,page1Group).setAdapterInterface({
+        onBindViewHolder=function(holder,position)
+          local groupView=holder.tag--获取组的view
+          local groupInfo=jsontext.apps[position+1]--获取组的信息
+          groupView.title.setText(groupInfo.name)
+          --首页每个应用的适配器
+          local adp=LuaRecyclerAdapter(activity,groupInfo.items,page1App).setAdapterInterface({
+            onBindViewHolder=function(holder2,position2)
+              local appView=holder2.tag--获取应用的view
+              local appInfo=jsontext.apps[position+1].items[position2+1]--获取应用的信息
+              appView.name.setText(appInfo.name)
+              --判断应用图标是不是svg
+              if(appInfo.img:find".svg")then
+                --如果是svg，判断是否有缓存
+                local file=activity.getExternalFilesDir(nil).toString().."/svg/"..appInfo.name..".svg"
+                if(File(file).exists())then
+                  --如果已经缓存过了，就直接加载
                   appView.svg.setImageURI(Uri.fromFile(File(file)))
-                end)
+                 else
+                  --如果没有缓存，就先缓存
+                  Http.download(server..appInfo.img,file,function(a)
+                    --缓存完毕，加载图片
+                    appView.svg.setImageURI(Uri.fromFile(File(file)))
+                  end)
+                end
+               else
+                --如果不是svg就直接用Glide加载
+                Glide.with(activity).load(server..appInfo.img).into(appView.icon)
               end
-             else
-              --如果不是svg就直接用Glide加载
-              Glide.with(activity).load(server..appInfo.img).into(appView.icon)
+              appView.card.onClick=function()
+                activity.newActivity("app",{appInfo.url})
+              end
             end
-            appView.card.onClick=function()
-              activity.newActivity("app",{appInfo.url})
-            end
-          end
-        })
-        groupView.recycler.setLayoutManager(GridLayoutManager(activity,4))
-        groupView.recycler.setAdapter(adp)
+          })
+          groupView.recycler.setLayoutManager(GridLayoutManager(activity,4))
+          groupView.recycler.setAdapter(adp)
+        end
+      })
+      page1Recycler.setLayoutManager(LinearLayoutManager(activity))
+      page1Recycler.setAdapter(page1Adp)
+     else
+      --获取失败
+      page1Progress.setVisibility(View.GONE)
+      page1Message.setText("获取失败 ("..code..")").onClick=function()
+        Get()
       end
-    })
-    page1Recycler.setLayoutManager(LinearLayoutManager(activity))
-    page1Recycler.setAdapter(page1Adp)
-  end,function(e)
-    page1Progress.setVisibility(View.GONE)
-    page1Message.setText("获取失败 ("..code..")")
+    end
   end)
-end)
+end
+
+Get()
 
 
 --获取首页轮播图
@@ -325,7 +339,7 @@ Http.get(server.."index.html",nil,"UTF-8",nil,function(code,content,cookie,heade
       ti.stop()
     end
   end,function(e)
-  Toast.makeText(activity,"轮播图获取失败("..code..")",0)
+    Toast.makeText(activity,"轮播图获取失败("..code..")",Toast.LENGTH_SHORT)
   end)
 end)
 

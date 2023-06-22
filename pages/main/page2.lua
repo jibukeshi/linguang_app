@@ -1,3 +1,7 @@
+import "android.webkit.WebChromeClient"
+import "android.webkit.WebViewClient"
+import "android.webkit.DownloadListener"
+
 --第二页布局，就一个LuaWebView，但是不能用FA2自带的因为有bug
 page2Layout=--常规框架
 {
@@ -68,7 +72,7 @@ page2Web.setWebViewClient({
   shouldOverrideUrlLoading=function(view,url)
     --Url即将跳转
     if not(url:find("bwcxlg.top")) then
-      进入子页面("web",{url})
+      activity.newActivity("web",{url})
       return true
     end
     --判断加载的链接是http/s还是scheme
@@ -77,7 +81,7 @@ page2Web.setWebViewClient({
       local intent=Intent(Intent.ACTION_VIEW,Uri.parse(url))
       --判断有没有对应的应用能打开这个scheme
       if(intent.resolveActivity(activity.getPackageManager())==nil)then
-        Toast.makeText(activity,"没有可以用于打开的应用",0).show()
+        Toast.makeText(activity,"没有可以用于打开的应用",Toast.LENGTH_SHORT).show()
        else
         activity.startActivity(intent)
       end
@@ -94,3 +98,33 @@ page2Web.setWebViewClient({
     page2Loading.setVisibility(View.GONE)
   end
 })
+
+page2Web.setWebChromeClient(luajava.override(WebChromeClient,{
+  onShowFileChooser=function(a,view,valueCallback,fileChooserParams)
+    uploadFile=valueCallback
+    local intent=fileChooserParams.createIntent()
+    activity.startActivityForResult(intent,1)
+    return true
+  end
+}))
+
+--上传文件回调
+onActivityResult=function(requestCode,resultCode,intent)
+  local Activity=import "android.app.Activity"
+  local Uri=import "android.net.Uri"
+  if(resultCode==Activity.RESULT_CANCELED)then
+    uploadFile.onReceiveValue(nil)
+    return
+  end
+  if(uploadFile==nil or type(uploadFile)=="number")then
+    return
+  end
+  if(resultCode==Activity.RESULT_OK and intent~=nil)then
+    local dataString=intent.getDataString()
+    if(dataString~=nil)then
+      local results=Uri[1]
+      results[0]=Uri.parse(dataString)
+      uploadFile.onReceiveValue(results)
+    end
+  end
+end

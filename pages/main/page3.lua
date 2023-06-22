@@ -197,7 +197,7 @@ page3Layout=--常规框架
             ImageView;--图片控件
             layout_width="35dp";--图片宽度
             layout_height="35dp";--图片高度
-            src="file_download";--图片路径
+            src="favorite";--图片路径
             --id="Image";--设置控件ID
             ColorFilter=textColorSecondary;--图片着色
             --ColorFilter=Color.BLUE;--设置图片着色
@@ -208,7 +208,7 @@ page3Layout=--常规框架
             TextView;--文本控件
             layout_width="wrap";--控件宽度
             layout_height="wrap";--控件高度
-            text="下载管理";--显示文字
+            text="赞助";--显示文字
             textSize="18sp";--文字大小
             textColor=textColorPrimary;--文字颜色
             --id="Text";--设置控件ID
@@ -226,7 +226,7 @@ page3Layout=--常规框架
             TextView;--文本控件
             layout_width="wrap";--控件宽度
             layout_height="wrap";--控件高度
-            text="查看已下载的应用";--显示文字
+            text="赞助粼光，支持开发";--显示文字
             textSize="12sp";--文字大小
             textColor=textColorSecondary;--文字颜色
             --id="Text";--设置控件ID
@@ -346,7 +346,7 @@ page3Data1={
         local url="mqqapi://card/show_pslcard?card_type=group&uin=424033580"
         activity.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(url)))
       end,function(e)
-        Toast.makeText(activity,"打开QQ失败，请确认是否已安装QQ/TIM",0).show()
+        Toast.makeText(activity,"打开QQ失败，请确认是否已安装QQ/TIM",Toast.LENGTH_SHORT).show()
       end)
     end},
   {icon=activity.loader.getImagePath("QQ.png"),title="QQ官方二群",click=function()
@@ -354,7 +354,7 @@ page3Data1={
         local url="mqqapi://card/show_pslcard?card_type=group&uin=452547525"
         activity.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(url)))
       end,function(e)
-        Toast.makeText(activity,"打开QQ失败，请确认是否已安装QQ/TIM",0).show()
+        Toast.makeText(activity,"打开QQ失败，请确认是否已安装QQ/TIM",Toast.LENGTH_SHORT).show()
       end)
     end},
   {icon=activity.loader.getImagePath("qqpindao.png"),title="QQ频道",click=function()
@@ -365,7 +365,7 @@ page3Data1={
         local url="tg://resolve?domain=linguang_a"
         activity.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(url)))
       end,function(e)
-        Toast.makeText(activity,"打开Telegram失败，请确认是否已安装Telegram",0).show()
+        Toast.makeText(activity,"打开Telegram失败，请确认是否已安装Telegram",Toast.LENGTH_SHORT).show()
       end)
     end},
   {icon=activity.loader.getImagePath("telegram.png"),title="Telegram群组",click=function()
@@ -373,14 +373,14 @@ page3Data1={
         local url="tg://resolve?domain=lgtg_1"
         activity.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(url)))
       end,function(e)
-        Toast.makeText(activity,"打开Telegram失败，请确认是否已安装Telegram",0).show()
+        Toast.makeText(activity,"打开Telegram失败，请确认是否已安装Telegram",Toast.LENGTH_SHORT).show()
       end)
+    end},
+  {icon=activity.loader.getImagePath("group_add"),title="反馈交流",click=function()
+      activity.newActivity("web",{server.."chat.html"})
     end},
   {icon=activity.loader.getImagePath("web"),title="官网",click=function()
       activity.newActivity("web",{"https://linlight.cn/"})
-    end},
-  {icon=activity.loader.getImagePath("favorite"),title="赞助",click=function()
-      activity.newActivity("web",{server.."money/"})
     end},
   {icon=activity.loader.getImagePath("github.png"),title="github",click=function()
       activity.newActivity("web",{"https://github.com/jibukeshi/linguang_app"})
@@ -396,7 +396,7 @@ end
 page3Data2={
   {icon=activity.loader.getImagePath("cloud_upload"),title="检查更新",click=function()
       Http.get(节点域名.."linguang/update.json",nil,"UTF-8",nil,function(code,content,cookie,header)
-        xpcall(function()
+        if(code==200 and content)then
           local jsontext=json.decode(content)
           local version=jsontext.version
           local versioncode=jsontext.versioncode
@@ -407,11 +407,11 @@ page3Data2={
           if(versioncode>versionCode)then
             更新弹窗(versionName,versionCode,version,versioncode,date,size,data,url)
            else
-            Toast.makeText(activity,"当前已是最新版本",0).show()
+            Toast.makeText(activity,"当前已是最新版本",Toast.LENGTH_SHORT).show()
           end
-        end,function(error)
-          Toast.makeText(activity,"检查更新失败("..code..")",0).show()
-        end)
+         else
+          Toast.makeText(activity,"检查更新失败("..code..")",Toast.LENGTH_SHORT).show()
+        end
       end)
     end},
   {icon=activity.loader.getImagePath("update"),title="历史更新",click=function()
@@ -422,7 +422,7 @@ page3Data2={
         local url="mqqapi://card/show_pslcard?uin=3290712646"
         activity.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(url)))
       end,function(e)
-        Toast.makeText(activity,"打开QQ失败，请确认是否已安装QQ/TIM",0).show()
+        Toast.makeText(activity,"打开QQ失败，请确认是否已安装QQ/TIM",Toast.LENGTH_SHORT).show()
       end)
     end},
   {icon=activity.loader.getImagePath("share"),title="分享应用",click=function()
@@ -444,5 +444,5 @@ page3Upload.onClick=function()
   activity.newActivity("web",{"https://jinshuju.net/f/vcoCgZ"})
 end
 page3Download.onClick=function()
-  activity.newActivity("download")
+  activity.newActivity("web",{server.."money/"})
 end

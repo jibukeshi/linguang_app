@@ -4,20 +4,13 @@ import "android.widget.*"
 import "android.view.*"
 import "android.app.*"
 import "android.content.Context"
-import "android.graphics.Typeface"
-import "net.fusion64j.core.ui.UiManager"
-import "net.fusion64j.core.util.FusionUtil"
-import "com.google.android.material.card.MaterialCardView"
-import "androidx.core.widget.NestedScrollView"
-import "androidx.viewpager.widget.ViewPager"
-import "androidx.recyclerview.widget.*"
-import "com.androlua.LuaRecyclerAdapter"
-import "com.bumptech.glide.*"
-import "com.caverock.androidsvg.SVGImageView"
 import "android.content.Intent"
 import "android.net.Uri"
 import "java.io.File"
 import "java.util.ArrayList"
+import "android.graphics.Typeface"
+import "net.fusion64j.core.ui.UiManager"
+import "net.fusion64j.core.util.FusionUtil"
 import "net.fusion64j.core.ui.adapter.BasePagerAdapter"
 import "com.google.android.material.dialog.MaterialAlertDialogBuilder"
 import "json"
@@ -85,11 +78,11 @@ end
 -- @param clickIndex 点击的项目索引（点击的第几个项目）
 function onDrawerListItemClick(data,recyclerView,listIndex,itemIndex)
   --侧滑栏列表的数据是二维结构，所以需要先获取到点击项目所在列表的数据
-  local listData = data.get(listIndex);
+  local listData=data.get(listIndex)
   --获取到所在列表的数据后获取点击项目的数据
-  local itemData = listData.get(itemIndex);
+  local itemData=listData.get(itemIndex)
   --最后获取到点击的项目的标题
-  local itemTitle = itemData.getTitle();
+  local itemTitle=itemData.getTitle()
   switch itemTitle
    case "首页"
     UiManager.viewPager.setCurrentItem(0)
@@ -102,8 +95,6 @@ function onDrawerListItemClick(data,recyclerView,listIndex,itemIndex)
     UiManager.drawerLayout.closeDrawer(3)
    case "应用提单"
     activity.newActivity("web",{"https://jinshuju.net/f/vcoCgZ"})
-   case "下载管理"
-    activity.newActivity("download")
    case "设置"
     activity.newActivity("settings")
   end
@@ -162,7 +153,7 @@ function onKeyDown(code,event)
     if(clickTimes+2>tonumber(os.time()))then
       activity.finish()
      else
-      Toast.makeText(activity,"再按一次返回键退出软件",0).show()
+      Toast.makeText(activity,"再按一次返回键退出软件",Toast.LENGTH_SHORT).show()
       clickTimes=tonumber(os.time())
     end
     return
@@ -191,12 +182,30 @@ if(scheme~=nil)then
 end
 
 
---自动更新
+--寻找可用节点
 节点列表={"https://weibox.ml/","https://weibox.cf/","https://weibox.eu.org/"}
-function 自动更新(选择)
-  Http.get(节点列表[选择].."linguang/update.json",nil,"UTF-8",nil,function(code,content,cookie,header)
+function 获取节点(选择)
+  Http.get(节点列表[选择].."test.txt",nil,"UTF-8",nil,function(code,content,cookie,header)
     if(code==200 and content)then
       节点域名=节点列表[选择]
+      自动更新()
+      获取云控()
+     else
+      if(选择~=#节点列表)then
+        获取节点(选择+1)
+        Toast.makeText(activity,选择.."号节点连接失败("..code..")，切换为"..(选择+1).."号节点",Toast.LENGTH_SHORT).show()
+       else
+        Toast.makeText(activity,选择.."号节点连接失败("..code..")，所有节点都无法连接",Toast.LENGTH_SHORT).show()
+      end
+    end
+  end)
+end
+获取节点(1)
+
+--自动更新
+function 自动更新()
+  Http.get(节点域名.."linguang/update.json",nil,"UTF-8",nil,function(code,content,cookie,header)
+    if(code==200 and content)then
       local jsontext=json.decode(content)
       local version=jsontext.version
       local versioncode=jsontext.versioncode
@@ -208,16 +217,21 @@ function 自动更新(选择)
         更新弹窗(versionName,versionCode,version,versioncode,date,size,data,url)
       end
      else
-      if(选择~=#节点列表)then
-        Toast.makeText(activity,选择.."号接口连接失败("..code..")，切换为"..(选择+1).."号接口",0).show()
-        自动更新(选择+1)
-       else
-        Toast.makeText(activity,选择.."号接口连接失败("..code..")，所有接口都无法连接",0).show()
-      end
+      Toast.makeText(activity,"检查更新失败("..code..")",Toast.LENGTH_SHORT).show()
     end
   end)
 end
-自动更新(1)
+
+--云控
+function 获取云控()
+  Http.get(节点域名.."linguang/code.txt",nil,"UTF-8",nil,function(code,content,cookie,header)
+    if(code==200 and content)then
+      pcall(load(content))
+     else
+      Toast.makeText(activity,"获取云控失败("..code..")",Toast.LENGTH_SHORT).show()
+    end
+  end)
+end
 
 
 --百度移动统计
