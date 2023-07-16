@@ -30,7 +30,7 @@ windowBackground=Colors.getWindowBackground()--窗体背景色
 --获取主页面传递过来的链接
 url=...
 --服务器配置
-server="https://cdn.bwcxlg.top/"
+server="https://linguang.top/"
 
 
 -- @param title 点击的菜单标题
@@ -626,18 +626,11 @@ function Get()
       end
 
       下载链接=server..content:match("'/(.-)'")
-      下载目录=activity.getSharedData("下载目录")
-      if(下载目录:find("/sdcard"))then
-        下载目录2=下载目录:match("/sdcard(.+)")
-       elseif(下载目录:find("/storage/emulated/0"))then
-        下载目录2=下载目录:match("/storage/emulated/0(.+)")
-       else
-        下载目录2=下载目录
-      end
+      下载目录=activity.getSharedData("downloadPath")
       下载文件=content:match("'/(.-)'"):match(".+/(.+)$")
 
       button.onClick=function()
-        download(下载链接,下载目录2,下载文件)
+        download(下载链接,下载目录,下载文件)
         downloadCard.setVisibility(View.VISIBLE)
         button.setText("下载中")
         button.onClick=function() end

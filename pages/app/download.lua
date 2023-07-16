@@ -1,11 +1,12 @@
 function download(url,path,filename)
   import "android.content.Context"
   import "android.net.Uri"
-  import "android.service.voice.VoiceInteractionSession$Request"
+  import "android.text.format.Formatter"
+  import "java.io.File"
   local downloadManager=activity.getSystemService(Context.DOWNLOAD_SERVICE)
   local request=DownloadManager.Request(Uri.parse(url))
   request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)--设置通知栏的显示
-  request.setDestinationInExternalPublicDir(path,filename)--设置下载路径
+  request.setDestinationUri(Uri.fromFile(File(path,filename)))--设置下载路径
   request.setVisibleInDownloadsUi(true)--下载的文件可以被系统的Downloads应用扫描到并管理
   request.setTitle(filename)--设置通知栏标题
   request.setDescription("将下载到"..path)--设置通知栏消息
@@ -33,21 +34,6 @@ function download(url,path,filename)
     local fileName=cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME))--文件名 string类型
     local fileUri=cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))--下载链接 string类型
     local title=cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_TITLE))--下载标题 string类型
-    local function format(a)--文件大小格式转换
-      if(a>=1024*1024 and a<=(1024*1024*1024)-1)then
-        s=(a/1024)/1024
-        s=string.format('%.2f', s).."MB"
-       elseif(a>=1024 and a<=(1024*1024)-1)then
-        s=a/1024
-        s=string.format('%.2f', s).."KB"
-       elseif(a<=1023)then
-        s=string.format('%.2f', a).."K"
-       elseif(a>=1024*1024*1024)then
-        s=a/(1024*1024*1024)
-        s=string.format('%.2f', s).."GB"
-      end
-      return s
-    end
     if(downloadId and downloadId==id and totalSize and totalSize>0)then
       switch status
         --下载暂停
@@ -66,21 +52,21 @@ function download(url,path,filename)
         downloadText.setText("下载暂停，"..reasonName)
         --正在下载
        case DownloadManager.STATUS_RUNNING
-        downloadText.setText("已下载"..format(downloadedSoFar).."，共"..format(totalSize).."，"..string.format('%.2f',(downloadedSoFar/totalSize*100)).."%")
+        downloadText.setText("已下载"..Formatter.formatFileSize(activity,downloadedSoFar).."，共"..Formatter.formatFileSize(activity,totalSize).."，"..string.format('%.2f',(downloadedSoFar/totalSize*100)).."%")
         downloadProgress.setProgress(tointeger(downloadedSoFar/totalSize*100))
         --下载完成
        case DownloadManager.STATUS_SUCCESSFUL
+        cursor.close()
+        ti.stop()
         downloadText.setText("下载完成")
         downloadProgress.setProgress(100)
         if(activity.getSharedData("自动安装"))then
-          install("/sdcard"..path..filename)
+          install(path..filename)
         end
         button.setText("立即安装")
         button.onClick=function()
-          install("/sdcard"..path..filename)
+          install(path..filename)
         end
-        cursor.close()
-        ti.stop()
         --下载失败
        case DownloadManager.STATUS_FAILED
         local reason=cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_REASON))
@@ -107,6 +93,12 @@ function download(url,path,filename)
         downloadText.setText("下载失败，"..reasonName)
         cursor.close()
         ti.stop()
+        --下载完成的动作
+       case DownloadManager.ACTION_DOWNLOAD_COMPLETE
+        --当用户单击notification中下载管理的某项时触发
+       case DownloadManager.ACTION_NOTIFICATION_CLICKED
+        --查看下载项
+       case DownloadManager.ACTION_VIEW_DOWNLOADS
       end
     end
   end
