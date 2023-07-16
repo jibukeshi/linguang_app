@@ -282,23 +282,17 @@ function 更新弹窗(当前版本,当前版本号,最新版本,最新版本号,
     activity.startActivity(Intent("android.intent.action.VIEW",Uri.parse(下载链接)))
   end
   download.onClick=function()
-    local 下载目录=activity.getSharedData("下载目录")
-    if(下载目录:find("/sdcard"))then
-      下载目录=下载目录:match("/sdcard(.+)")
-    end
-    if(下载目录:find("/storage/emulated/0"))then
-      下载目录=下载目录:match("/storage/emulated/0(.+)")
-    end
+    local 下载目录=activity.getSharedData("downloadPath")
     下载监听(下载链接,下载目录,"粼光应用商店_"..最新版本..".apk")
     downloadText.setVisibility(View.VISIBLE)
     downloadProgress.setVisibility(View.VISIBLE)
     download.getChildAt(0).setText("下载中")
     download.onClick=function()end
   end
-  if(File(activity.getSharedData("下载目录").."粼光应用商店_"..最新版本..".apk").exists())then
+  if(File(下载目录.."粼光应用商店_"..最新版本..".apk").exists())then
     download.getChildAt(0).setText("立即安装")
     download.onClick=function()
-      安装应用(activity.getSharedData("下载目录").."粼光应用商店_"..最新版本..".apk")
+      安装应用(下载目录.."粼光应用商店_"..最新版本..".apk")
     end
   end
 end
@@ -306,11 +300,12 @@ end
 function 下载监听(url,path,filename)
   import "android.content.Context"
   import "android.net.Uri"
-  import "android.service.voice.VoiceInteractionSession$Request"
+  import "android.text.format.Formatter"
+  import "java.io.File"
   local downloadManager=activity.getSystemService(Context.DOWNLOAD_SERVICE)
   local request=DownloadManager.Request(Uri.parse(url))
   request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)--设置通知栏的显示
-  request.setDestinationInExternalPublicDir(path,filename)--设置下载路径
+  request.setDestinationUri(Uri.fromFile(File(path,filename)))--设置下载路径
   request.setVisibleInDownloadsUi(true)--下载的文件可以被系统的Downloads应用扫描到并管理
   request.setTitle(filename)--设置通知栏标题
   request.setDescription("将下载到"..path)--设置通知栏消息
@@ -338,21 +333,6 @@ function 下载监听(url,path,filename)
     local fileName=cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME))--文件名 string类型
     local fileUri=cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))--下载链接 string类型
     local title=cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_TITLE))--下载标题 string类型
-    local function 转换(a)
-      if(a>=1024*1024 and a<=(1024*1024*1024)-1)then
-        s=(a/1024)/1024
-        s=string.format('%.2f', s).."MB"
-       elseif(a>=1024 and a<=(1024*1024)-1)then
-        s=a/1024
-        s=string.format('%.2f', s).."KB"
-       elseif(a<=1023)then
-        s=string.format('%.2f', a).."K"
-       elseif(a>=1024*1024*1024)then
-        s=a/(1024*1024*1024)
-        s=string.format('%.2f', s).."GB"
-      end
-      return s
-    end
     if(downloadId and downloadId==id and totalSize and totalSize>0)then
       switch status
         --下载暂停
@@ -371,16 +351,16 @@ function 下载监听(url,path,filename)
         downloadText.setText("下载暂停，"..reasonName)
         --正在下载
        case DownloadManager.STATUS_RUNNING
-        downloadText.setText("已下载"..转换(downloadedSoFar).."，共"..转换(totalSize).."，"..string.format('%.2f',(downloadedSoFar/totalSize*100)).."%")
+        downloadText.setText("已下载"..Formatter.formatFileSize(activity,downloadedSoFar).."，共"..Formatter.formatFileSize(activity,totalSize).."，"..string.format('%.2f',(downloadedSoFar/totalSize*100)).."%")
         downloadProgress.setProgress(tointeger(downloadedSoFar/totalSize*100))
         --下载完成
        case DownloadManager.STATUS_SUCCESSFUL
         downloadText.setText("下载完成")
         downloadProgress.setProgress(100)
-        安装应用(activity.getSharedData("下载目录")..filename)
+        安装应用(path..filename)
         download.getChildAt(0).setText("立即安装")
         download.onClick=function()
-          安装应用(activity.getSharedData("下载目录")..filename)
+          安装应用(path..filename)
         end
         cursor.close()
         ti.stop()
