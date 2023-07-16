@@ -24,10 +24,10 @@ windowBackground=Colors.getWindowBackground()--窗体背景色
 --获取主页面传递过来的链接
 url=...
 
-if(url:find("cdn.bwcxlg.top/apps/") or url:find("cdn.bwcxlg.top//apps/"))then
-  activity.newActivity("app",{url:match("cdn.bwcxlg.top/(.+)")})
+if(url:find("linguang.top/apps/") or url:find("linguang.top//apps/"))then
+  activity.newActivity("app",{url:match("linguang.top/(.+)")})
   activity.finish()
- elseif(url=="https://cdn.bwcxlg.top/" or url=="https://cdn.bwcxlg.top/index.html")then
+ elseif(url=="https://linguang.top/" or url=="https://linguang.top/index.html")then
   activity.newActivity("main")
   activity.finish()
  else
@@ -51,7 +51,7 @@ function onMenuItemClick(title)
    case "复制链接"
     import "android.content.Context"
     activity.getSystemService(Context.CLIPBOARD_SERVICE).setText(webView.getUrl())
-    Toast.makeText(activity,"链接已复制到剪贴板",0).show()
+    Toast.makeText(activity,"链接已复制到剪贴板",Toast.LENGTH_SHORT).show()
    case "外部打开"
     import "android.content.Intent"
     import "android.net.Uri"
@@ -67,13 +67,13 @@ webView.setWebViewClient(luajava.override(WebViewClient,{
     --返回true则拦截本次加载
     --拦截加载建议在这里操作
     local url=webResourceRequest.getUrl().toString()
-    if(url:find("cdn.bwcxlg.top/apps/") or url:find("cdn.bwcxlg.top//apps/"))then
-      activity.newActivity("app",{url:match("cdn.bwcxlg.top/(.+)")})
+    if(url:find("linguang.top/apps/") or url:find("linguang.top//apps/"))then
+      activity.newActivity("app",{url:match("linguang.top/(.+)")})
       if not(webView.canGoBack())then
         activity.finish()
       end
       return true
-     elseif(url=="https://cdn.bwcxlg.top/" or url=="https://cdn.bwcxlg.top/index.html")then
+     elseif(url=="https://linguang.top/" or url=="https://linguang.top/index.html")then
       activity.newActivity("main")
       if not(webView.canGoBack())then
         activity.finish()
@@ -92,7 +92,7 @@ webView.setWebViewClient(luajava.override(WebViewClient,{
         local intent=Intent(Intent.ACTION_VIEW,Uri.parse(url))
         --判断有没有对应的应用能打开这个scheme
         if(intent.resolveActivity(activity.getPackageManager())==nil)then
-          Toast.makeText(activity,"没有可以用于打开的应用",0).show()
+          Toast.makeText(activity,"没有可以用于打开的应用",Toast.LENGTH_SHORT).show()
          else
           activity.startActivity(intent)
         end
@@ -141,6 +141,20 @@ webView.setWebViewClient(luajava.override(WebViewClient,{
   end,
   onReceivedHttpError=function(superCall,view,webResourceRequest,webResourceResponse)
     --请求返回HTTP错误码时
+--只考虑网页主请求
+      if webResourceRequest.isForMainFrame() then
+        --以下错误页布局仅在FA2中有效，其他编辑器请自行更换页面
+        errStatus = webResourceResponse.getStatusCode()
+        local errPage = luajava.bindClass"net.fusionapp.core.R".layout.web_error_page
+        local inflater = luajava.bindClass "android.view.LayoutInflater".from(activity)
+        errView = inflater.inflate(errPage, nil)
+        view.getParent().addView(errView)
+        errView.setBackgroundColor(luajava.bindClass "android.graphics.Color".parseColor("#ffffff"))
+        errView.setOnClickListener(function()
+          errStatus = nil
+          view.reload()
+        end)
+      end
   end,
   onReceivedError=function(superCall,view,webResourceRequest,webResourceError)
     --页面加载异常事件
@@ -235,18 +249,12 @@ webView.setDownloadListener(DownloadListener{
     .setPositiveButton("内部下载",function()
       import "android.content.Context"
       import "android.net.Uri"
-      import "android.service.voice.VoiceInteractionSession$Request"
-      local path=activity.getSharedData("下载目录")
-      if(path:find("/sdcard"))then
-        path=path:match("/sdcard(.+)")
-      end
-      if(path:find("/storage/emulated/0"))then
-        path=path:match("/storage/emulated/0(.+)")
-      end
+      import "java.io.File"
+      local path=activity.getSharedData("downloadPath")
       local downloadManager=activity.getSystemService(Context.DOWNLOAD_SERVICE)
       local request=DownloadManager.Request(Uri.parse(url))
       request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)--设置通知栏的显示
-      request.setDestinationInExternalPublicDir(path,fileName)--设置下载路径
+      request.setDestinationUri(Uri.fromFile(File(path,filename)))--设置下载路径
       request.setVisibleInDownloadsUi(true)--下载的文件可以被系统的Downloads应用扫描到并管理
       request.setTitle(fileName)--设置通知栏标题
       request.setDescription("将下载到"..path)--设置通知栏消息
@@ -259,7 +267,7 @@ webView.setDownloadListener(DownloadListener{
         cursor.close()
         return
       end
-      Toast.makeText(activity,"开始下载，请前往通知栏查看下载进度",0).show()
+      Toast.makeText(activity,"开始下载，请前往通知栏查看下载进度",Toast.LENGTH_SHORT).show()
     end)
     .setNegativeButton("外部下载",function()
       import "android.content.Intent"
