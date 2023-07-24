@@ -141,20 +141,6 @@ webView.setWebViewClient(luajava.override(WebViewClient,{
   end,
   onReceivedHttpError=function(superCall,view,webResourceRequest,webResourceResponse)
     --请求返回HTTP错误码时
---只考虑网页主请求
-      if webResourceRequest.isForMainFrame() then
-        --以下错误页布局仅在FA2中有效，其他编辑器请自行更换页面
-        errStatus = webResourceResponse.getStatusCode()
-        local errPage = luajava.bindClass"net.fusionapp.core.R".layout.web_error_page
-        local inflater = luajava.bindClass "android.view.LayoutInflater".from(activity)
-        errView = inflater.inflate(errPage, nil)
-        view.getParent().addView(errView)
-        errView.setBackgroundColor(luajava.bindClass "android.graphics.Color".parseColor("#ffffff"))
-        errView.setOnClickListener(function()
-          errStatus = nil
-          view.reload()
-        end)
-      end
   end,
   onReceivedError=function(superCall,view,webResourceRequest,webResourceError)
     --页面加载异常事件
@@ -257,7 +243,7 @@ webView.setDownloadListener(DownloadListener{
       request.setDestinationUri(Uri.fromFile(File(path,filename)))--设置下载路径
       request.setVisibleInDownloadsUi(true)--下载的文件可以被系统的Downloads应用扫描到并管理
       request.setTitle(fileName)--设置通知栏标题
-      request.setDescription("将下载到"..path)--设置通知栏消息
+      request.setDescription(url)--设置通知栏消息
       request.setShowRunningNotification(true)--设置显示下载进度提示
       local downloadId=downloadManager.enqueue(request)
       local downloadManager=activity.getSystemService(Context.DOWNLOAD_SERVICE)
