@@ -9,7 +9,7 @@ function download(url,path,filename)
   request.setDestinationUri(Uri.fromFile(File(path,filename)))--设置下载路径
   request.setVisibleInDownloadsUi(true)--下载的文件可以被系统的Downloads应用扫描到并管理
   request.setTitle(filename)--设置通知栏标题
-  request.setDescription("将下载到"..path)--设置通知栏消息
+  request.setDescription(url)--设置通知栏消息
   request.setShowRunningNotification(true)--设置显示下载进度提示
   local downloadId=downloadManager.enqueue(request)
   local downloadManager=activity.getSystemService(Context.DOWNLOAD_SERVICE)
@@ -106,22 +106,14 @@ function download(url,path,filename)
 end
 
 function install(path)
-  --检查储存和安装应用权限
-  if(activity.getPackageManager().canRequestPackageInstalls() and activity.checkSelfPermission("android.permission.READ_EXTERNAL_STORAGE")==0)then
-    --如果有权限就安装
-    import "android.content.Intent"
-    import "android.content.FileProvider"
-    local intent=Intent("android.intent.action.VIEW").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    local uri=FileProvider.getUriForFile(activity,activity.getPackageName()..".FileProvider",File(path))
-    intent.setDataAndType(uri,"application/vnd.android.package-archive")
-    activity.startActivity(intent)
-   else
-    --如果没有权限就申请
-    Toast.makeText(activity,"需要给予安装与存储读取权限",Toast.LENGTH_SHORT).show()
-    import "android.content.Intent"
-    import "android.provider.Settings"
-    import "android.net.Uri"
-    activity.startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,Uri.parse("package:"..activity.getPackageName())))
-    activity.requestPermissions({"android.permission.READ_EXTERNAL_STORAGE","android.permission.WRITE_EXTERNAL_STORAGE"},1)
-  end
+  import "java.io.File"
+  import "android.content.Intent"
+  import "androidx.core.content.FileProvider"
+  import "android.content.FileProvider"
+  local intent=Intent("android.intent.action.VIEW")
+  intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+  intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+  local contentUri=FileProvider.getUriForFile(activity,activity.getPackageName()..".FileProvider",File(path))
+  intent.setDataAndType(contentUri,"application/vnd.android.package-archive")
+  activity.startActivity(intent)
 end
