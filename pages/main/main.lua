@@ -28,7 +28,7 @@ windowBackground=Colors.getWindowBackground()--窗体背景色
 
 
 --服务器域名
-server="https://cdn.bwcxlg.top/"
+server="https://linguang.top/"
 
 
 --初始化设置
@@ -174,8 +174,8 @@ if(scheme~=nil)then
     activity.newActivity("search")
    elseif(scheme:find("linguang://apps/"))then
     activity.newActivity("app",{scheme:match("linguang://(.+)")..".html"})
-   elseif(scheme:find("http://cdn.bwcxlg.top/apps/") or scheme:find("https://cdn.bwcxlg.top/apps/"))then
-    activity.newActivity("app",{scheme:match("cdn.bwcxlg.top/(.+)")})
+   elseif(scheme:find("http://linguang.top/apps/") or scheme:find("https://linguang.top/apps/"))then
+    activity.newActivity("app",{scheme:match("linguang.top/(.+)")})
    else
     activity.newActivity("web",{scheme})
   end

@@ -215,6 +215,7 @@ function Get()--获取首页应用列表
   page1Normal.setVisibility(View.GONE)
   page1Images.setVisibility(View.GONE)
   page1Loading.setVisibility(View.VISIBLE)
+  page1Progress.setVisibility(View.VISIBLE)
   page1Message.setText("获取中……").onClick=function()end
   Http.get(server.."index.json",nil,"UTF-8",nil,function(code,content,cookie,header)
     if(code==200 and content)then

@@ -64,14 +64,14 @@ page2Layout=--常规框架
 UiManager.getFragment(1).view.addView(loadlayout(page2Layout))
 
 
-page2Web.loadUrl("https://bwcxlg.top/")
+page2Web.loadUrl("https://club.linguang.top/")
 page2Web.removeView(page2Web.getChildAt(0))--去除进度条
 page2Web.setVisibility(View.INVISIBLE)--将WebView设置为隐藏，能看见下面的加载进度条
 page2Loading.setVisibility(View.VISIBLE)
 page2Web.setWebViewClient({
   shouldOverrideUrlLoading=function(view,url)
     --Url即将跳转
-    if not(url:find("bwcxlg.top")) then
+    if not(url:find("club.linguang.top")) then
       activity.newActivity("web",{url})
       return true
     end
