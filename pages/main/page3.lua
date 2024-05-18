@@ -358,7 +358,7 @@ page3Data1={
       end)
     end},
   {icon=activity.loader.getImagePath("qqpindao.png"),title="QQ频道",click=function()
-      activity.newActivity("web",{"https://pd.qq.com/s/avu5s08ka"})
+      activity.newActivity("web",{serverUrl,"https://pd.qq.com/s/avu5s08ka"})
     end},
   {icon=activity.loader.getImagePath("commercial.png"),title="Telegram频道",click=function()
       xpcall(function()
@@ -377,13 +377,13 @@ page3Data1={
       end)
     end},
   {icon=activity.loader.getImagePath("group_add"),title="反馈交流",click=function()
-      activity.newActivity("web",{server.."chat.html"})
+      activity.newActivity("web",{serverUrl,server.."chat.html"})
     end},
   {icon=activity.loader.getImagePath("web"),title="官网",click=function()
-      activity.newActivity("web",{"https://linlight.cn/"})
+      activity.newActivity("web",{serverUrl,"http://linlight.cn/"})
     end},
   {icon=activity.loader.getImagePath("github.png"),title="github",click=function()
-      activity.newActivity("web",{"https://github.com/jibukeshi/linguang_app"})
+      activity.newActivity("web",{serverUrl,"https://github.com/jibukeshi/linguang_app"})
     end},
 }
 page3Adp1=LuaRecyclerAdapter(activity,page3Data1,page3Item)
@@ -415,7 +415,7 @@ page3Data2={
       end)
     end},
   {icon=activity.loader.getImagePath("update"),title="历史更新",click=function()
-      activity.newActivity("web",{节点域名.."/linguang/history.html"})
+      activity.newActivity("web",{serverUrl,节点域名.."/linguang/history.html"})
     end},
   {icon=activity.loader.getImagePath("person"),title="联系作者",click=function()
       xpcall(function()
@@ -441,8 +441,8 @@ page3Adp2.onItemClick=function(adapter,itemView,view,pos)
 end
 
 page3Upload.onClick=function()
-  activity.newActivity("web",{"https://jinshuju.net/f/vcoCgZ"})
+  activity.newActivity("web",{serverUrl,"https://jinshuju.net/f/vcoCgZ"})
 end
 page3Download.onClick=function()
-  activity.newActivity("web",{server.."money/"})
+  activity.newActivity("web",{serverUrl,serverUrl.."money/"})
 end

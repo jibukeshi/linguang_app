@@ -27,9 +27,25 @@ textColorSecondary=Colors.getTextColorSecondary()--副文本色
 windowBackground=Colors.getWindowBackground()--窗体背景色
 
 
---服务器域名
-server="https://linguang.top/"
-
+--主站域名，能用哪个就用哪个吧……
+serverList={"https://lgboxs.com/","https://linguang.jibukeshi.link/","https://linguang.top/","https://cdn.bwcxlg.top/"}
+function testServers(selected)
+  Http.get(serverList[selected],nil,"UTF-8",nil,function(code,content,cookie,header)
+    if(code==200)then
+      serverUrl=serverList[selected]
+      GetApplist()
+      schemeJump()
+     else
+      if(selected~=#serverList)then--如果不是最后一个域名
+        testServers(selected+1)
+        Toast.makeText(activity,选择.."号主站连接失败("..code..")，切换为"..(selected+1).."号主站",Toast.LENGTH_SHORT).show()
+       else
+        Toast.makeText(activity,选择.."号主站连接失败("..code..")，所有主站都无法连接，请加群询问",Toast.LENGTH_SHORT).show()
+      end
+    end
+  end)
+end
+testServers(1)
 
 --初始化设置
 --启动时检查更新
@@ -94,7 +110,7 @@ function onDrawerListItemClick(data,recyclerView,listIndex,itemIndex)
     UiManager.viewPager.setCurrentItem(2)
     UiManager.drawerLayout.closeDrawer(3)
    case "应用提单"
-    activity.newActivity("web",{"https://jinshuju.net/f/vcoCgZ"})
+    activity.newActivity("web",{serverUrl,"https://jinshuju.net/f/vcoCgZ"})
    case "设置"
     activity.newActivity("settings")
   end
@@ -105,7 +121,7 @@ end
 function onMenuItemClick(title)
   switch title
    case "搜索"
-    activity.newActivity("search")
+    activity.newActivity("search",{serverUrl})
   end
 end
 
@@ -162,28 +178,37 @@ end
 
 
 --URL scheme
-local scheme=activity.getIntent().getStringExtra("SchemeData")
-if(scheme~=nil)then
-  if(scheme:find("linguang://home/"))then
-    UiManager.viewPager.setCurrentItem(0)
-   elseif(scheme:find("linguang://forum/"))then
-    UiManager.viewPager.setCurrentItem(1)
-   elseif(scheme:find("linguang://my/"))then
-    UiManager.viewPager.setCurrentItem(2)
-   elseif(scheme:find("linguang://search/"))then
-    activity.newActivity("search")
-   elseif(scheme:find("linguang://apps/"))then
-    activity.newActivity("app",{scheme:match("linguang://(.+)")..".html"})
-   elseif(scheme:find("http://linguang.top/apps/") or scheme:find("https://linguang.top/apps/"))then
-    activity.newActivity("app",{scheme:match("linguang.top/(.+)")})
-   else
-    activity.newActivity("web",{scheme})
+function schemeJump()
+  local scheme=activity.getIntent().getStringExtra("SchemeData")
+  if(scheme~=nil)then
+    if(scheme:find("linguang://home/"))then
+      UiManager.viewPager.setCurrentItem(0)
+     elseif(scheme:find("linguang://forum/"))then
+      UiManager.viewPager.setCurrentItem(1)
+     elseif(scheme:find("linguang://my/"))then
+      UiManager.viewPager.setCurrentItem(2)
+     elseif(scheme:find("linguang://search/"))then
+      activity.newActivity("search",{serverUrl})
+     elseif(scheme:find("linguang://apps/"))then
+      activity.newActivity("app",{serverUrl,scheme:match("linguang://(.+)")..".html"})
+      --加个兼容旧版域名的 scheme 吧
+     elseif(scheme:find("http://linguang.top/apps/") or scheme:find("https://linguang.top/apps/"))then
+      activity.newActivity("app",{serverUrl,scheme:match("linguang.top/(.+)")})
+     elseif(scheme:find("http://lgboxs.com/apps/") or scheme:find("https://lgboxs.com/apps/"))then
+      activity.newActivity("app",{serverUrl,scheme:match("lgboxs.com/(.+)")})
+     elseif(scheme:find("http://linguang.jibukeshi.link/apps/") or scheme:find("https://linguang.jibukeshi.link/apps/"))then
+      activity.newActivity("app",{serverUrl,scheme:match("linguang.jibukeshi.link/(.+)")})
+     elseif(scheme:find("http://cdn.bwcxlg.top/apps/") or scheme:find("https://cdn.bwcxlg.top/apps/"))then
+      activity.newActivity("app",{serverUrl,scheme:match("cdn.bwcxlg.top/(.+)")})
+     else
+      activity.newActivity("web",{serverUrl,scheme})
+    end
   end
 end
 
 
 --寻找可用节点
-节点列表={"https://weibox.ml/","https://weibox.cf/","https://weibox.eu.org/"}
+节点列表={"https://weibox.jibukeshi.link/","https://qingzhi.bf/","https://weibox.eu.org/","https://frp.jibukeshi.link"}
 function 获取节点(选择)
   Http.get(节点列表[选择].."test.txt",nil,"UTF-8",nil,function(code,content,cookie,header)
     if(code==200 and content)then

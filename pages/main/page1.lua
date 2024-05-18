@@ -211,13 +211,14 @@ local page1App=
 };
 
 
-function Get()--获取首页应用列表
+function GetApplist()--获取首页应用列表
   page1Normal.setVisibility(View.GONE)
   page1Images.setVisibility(View.GONE)
   page1Loading.setVisibility(View.VISIBLE)
   page1Progress.setVisibility(View.VISIBLE)
   page1Message.setText("获取中……").onClick=function()end
-  Http.get(server.."index.json",nil,"UTF-8",nil,function(code,content,cookie,header)
+  
+  Http.get(serverUrl.."index.json",nil,"UTF-8",nil,function(code,content,cookie,header)
     if(code==200 and content)then
       --获取成功
       page1Normal.setVisibility(View.VISIBLE)
@@ -245,17 +246,17 @@ function Get()--获取首页应用列表
                   appView.svg.setImageURI(Uri.fromFile(File(file)))
                  else
                   --如果没有缓存，就先缓存
-                  Http.download(server..appInfo.img,file,function(a)
+                  Http.download(serverUrl..appInfo.img,file,function(a)
                     --缓存完毕，加载图片
                     appView.svg.setImageURI(Uri.fromFile(File(file)))
                   end)
                 end
                else
                 --如果不是svg就直接用Glide加载
-                Glide.with(activity).load(server..appInfo.img).into(appView.icon)
+                Glide.with(activity).load(serverUrl..appInfo.img).into(appView.icon)
               end
               appView.card.onClick=function()
-                activity.newActivity("app",{appInfo.url})
+                activity.newActivity("app",{serverUrl,appInfo.url})
               end
             end
           })
@@ -269,78 +270,78 @@ function Get()--获取首页应用列表
       --获取失败
       page1Progress.setVisibility(View.GONE)
       page1Message.setText("获取失败 ("..code..")").onClick=function()
-        Get()
+        GetApplist()
       end
     end
   end)
+
+  --获取首页轮播图
+  Http.get(serverUrl.."index.html",nil,"UTF-8",nil,function(code,content,cookie,header)
+    xpcall(function()
+      page1Images.setVisibility(View.VISIBLE)
+      local list=ArrayList()
+      for k in content:match([[轮播图 感谢学神之女(.-)轮播的内容可以是图片]]):gmatch("<img(.-)>") do
+        local image=k:match([[src="(.-)"]])--获取图片链接
+        local url=k:match("'(.-)'")--获取跳转链接
+        --如果图片链接没有域名就加上
+        if(image and not(image:find("://")))then
+          image=serverUrl..image
+        end
+        --如果跳转链接没有域名就加上
+        if(url and not(url:find("://")))then
+          url=serverUrl..url
+        end
+        local imageLayout=
+        {
+          MaterialCardView;--卡片控件
+          layout_width="fill";--卡片宽度
+          layout_height="wrap";--卡片高度
+          cardBackgroundColor=colorPrimary;--卡片颜色
+          cardElevation="0dp";--卡片阴影
+          radius="5dp";--卡片圆角
+          onClick=function()
+            if(url)then
+              activity.newActivity("web",{serverUrl,serverUrl,url})
+            end
+          end;
+          {
+            ImageView;--图片控件
+            layout_width="fill";--图片宽度
+            layout_height="wrap";--图片高度
+            src=image;--图片路径
+            --id="Image";--设置控件ID
+            --ColorFilter="";--图片着色
+            --ColorFilter=Color.BLUE;--设置图片着色
+            scaleType="fitCenter";--图片拉伸
+            layout_gravity="center";--重力
+          };
+        };
+        list.add(loadlayout(imageLayout))
+      end
+      page1Images.setAdapter(BasePagerAdapter(list))
+      --自动轮播
+      local ti=Ticker()
+      ti.Period=5000
+      ti.onTick=function()
+        if(page1Images.getCurrentItem()==list.size()-1)then
+          --如果已经是最后一张了就显示第一张
+          page1Images.setCurrentItem(0,true)
+         else
+          --否则就显示下一张
+          page1Images.setCurrentItem(page1Images.getCurrentItem()+1,true)
+        end
+      end
+      ti.start()
+      --退出应用停止轮播
+      function onDestroy()
+        ti.stop()
+      end
+    end,function(e)
+      page1Images.setVisibility(View.GONE)
+      Toast.makeText(activity,"轮播图获取失败("..code..")",Toast.LENGTH_SHORT)
+    end)
+  end)
+
 end
 
-Get()
-
-
---获取首页轮播图
-Http.get(server.."index.html",nil,"UTF-8",nil,function(code,content,cookie,header)
-  xpcall(function()
-    page1Images.setVisibility(View.VISIBLE)
-    local list=ArrayList()
-    for k in content:match([[轮播图 感谢学神之女(.-)轮播的内容可以是图片]]):gmatch("<img(.-)>") do
-      local image=k:match([[src="(.-)"]])--获取图片链接
-      local url=k:match("'(.-)'")--获取跳转链接
-      --如果图片链接没有域名就加上
-      if(image and not(image:find("://")))then
-        image=server..image
-      end
-      --如果跳转链接没有域名就加上
-      if(url and not(url:find("://")))then
-        url=server..url
-      end
-      local imageLayout=
-      {
-        MaterialCardView;--卡片控件
-        layout_width="fill";--卡片宽度
-        layout_height="wrap";--卡片高度
-        cardBackgroundColor=colorPrimary;--卡片颜色
-        cardElevation="0dp";--卡片阴影
-        radius="5dp";--卡片圆角
-        onClick=function()
-          if(url)then
-            activity.newActivity("web",{url})
-          end
-        end;
-        {
-          ImageView;--图片控件
-          layout_width="fill";--图片宽度
-          layout_height="wrap";--图片高度
-          src=image;--图片路径
-          --id="Image";--设置控件ID
-          --ColorFilter="";--图片着色
-          --ColorFilter=Color.BLUE;--设置图片着色
-          scaleType="fitCenter";--图片拉伸
-          layout_gravity="center";--重力
-        };
-      };
-      list.add(loadlayout(imageLayout))
-    end
-    page1Images.setAdapter(BasePagerAdapter(list))
-    --自动轮播
-    local ti=Ticker()
-    ti.Period=5000
-    ti.onTick=function()
-      if(page1Images.getCurrentItem()==list.size()-1)then
-        --如果已经是最后一张了就显示第一张
-        page1Images.setCurrentItem(0,true)
-       else
-        --否则就显示下一张
-        page1Images.setCurrentItem(page1Images.getCurrentItem()+1,true)
-      end
-    end
-    ti.start()
-    --退出应用停止轮播
-    function onDestroy()
-      ti.stop()
-    end
-  end,function(e)
-    Toast.makeText(activity,"轮播图获取失败("..code..")",Toast.LENGTH_SHORT)
-  end)
-end)
 
