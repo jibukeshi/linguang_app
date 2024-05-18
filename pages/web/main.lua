@@ -21,13 +21,25 @@ textColorSecondary=Colors.getTextColorSecondary()--副文本色
 windowBackground=Colors.getWindowBackground()--窗体背景色
 
 
---获取主页面传递过来的链接
-url=...
+--获取主页面传递过来的链接和主站域名
+serverUrl,url=...
 
 if(url:find("linguang.top/apps/") or url:find("linguang.top//apps/"))then
-  activity.newActivity("app",{url:match("linguang.top/(.+)")})
+  activity.newActivity("app",{serverUrl,url:match("linguang.top/(.+)")})
   activity.finish()
- elseif(url=="https://linguang.top/" or url=="https://linguang.top/index.html")then
+ elseif(url:find("lgboxs.com/apps/") or url:find("lgboxs.com//apps/"))then
+  activity.newActivity("app",{serverUrl,url:match("lgboxs.com/(.+)")})
+  activity.finish()
+ elseif(url:find("linguang.jibukeshi.link/apps/") or url:find("linguang.jibukeshi.link//apps/"))then
+  activity.newActivity("app",{serverUrl,url:match("linguang.jibukeshi.link/(.+)")})
+  activity.finish()
+ elseif(url:find("cdn.bwcxlg.top/apps/") or url:find("cdn.bwcxlg.top//apps/"))then
+  activity.newActivity("app",{serverUrl,url:match("cdn.bwcxlg.top/(.+)")})
+  activity.finish()
+ elseif(url=="https://linguang.top/" or url=="https://linguang.top/index.html" or url=="http://linguang.top/" or url=="http://linguang.top/index.html"
+  or url=="https://lgboxs.com/" or url=="https://lgboxs.com/index.html" or url=="http://lgboxs.com/" or url=="http://lgboxs.com/index.html"
+  or url=="https://linguang.jibukeshi.link/" or url=="https://linguang.jibukeshi.link/index.html" or url=="http://linguang.jibukeshi.link/" or url=="http://linguang.jibukeshi.link/index.html"
+  or url=="https://cdn.bwcxlg.top/" or url=="https://cdn.bwcxlg.top/index.html" or url=="http://cdn.bwcxlg.top/" or url=="http://cdn.bwcxlg.top/index.html")then
   activity.newActivity("main")
   activity.finish()
  else
@@ -67,13 +79,16 @@ webView.setWebViewClient(luajava.override(WebViewClient,{
     --返回true则拦截本次加载
     --拦截加载建议在这里操作
     local url=webResourceRequest.getUrl().toString()
-    if(url:find("linguang.top/apps/") or url:find("linguang.top//apps/"))then
-      activity.newActivity("app",{url:match("linguang.top/(.+)")})
+    if(url:find("linguang.top/apps/") or url:find("linguang.top//apps/") or url:find("lgboxs.com/apps/") or url:find("lgboxs.com//apps/"))then
+      activity.newActivity("app",{serverUrl,url:match("linguang.top/(.+)")})
       if not(webView.canGoBack())then
         activity.finish()
       end
       return true
-     elseif(url=="https://linguang.top/" or url=="https://linguang.top/index.html")then
+     elseif(url=="https://linguang.top/" or url=="https://linguang.top/index.html" or url=="http://linguang.top/" or url=="http://linguang.top/index.html"
+      or url=="https://lgboxs.com/" or url=="https://lgboxs.com/index.html" or url=="http://lgboxs.com/" or url=="http://lgboxs.com/index.html"
+      or url=="https://linguang.jibukeshi.link/" or url=="https://linguang.jibukeshi.link/index.html" or url=="http://linguang.jibukeshi.link/" or url=="http://linguang.jibukeshi.link/index.html"
+      or url=="https://cdn.bwcxlg.top/" or url=="https://cdn.bwcxlg.top/index.html" or url=="http://cdn.bwcxlg.top/" or url=="http://cdn.bwcxlg.top/index.html")then
       activity.newActivity("main")
       if not(webView.canGoBack())then
         activity.finish()
