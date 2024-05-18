@@ -108,8 +108,8 @@ data={
   {title="应用崩溃记录",dir=externalFilesDir.."/crash",check=true},
   {title="SVG 图片缓存",dir=externalFilesDir.."/svg",check=true},
   {title="Glide 图片加载缓存",dir=dataDir.."/cache/image_manager_disk_cache",check=true},
+  {title="WebView 缓存",dir=dataDir.."/cache/WebView",check=true},
   {title="WebView 存储数据",dir=dataDir.."/app_webview",check=false},
-  {title="WebView 缓存信息",dir=dataDir.."/cache/WebView",check=false},
   {title="其他缓存",dir=externalCacheDir,check=true},
 }
 
@@ -186,5 +186,5 @@ clean.onClick=function()
     end
   end
   adp.notifyDataSetChanged()
-  Toast.makeText(activity,"清理成功",0).show()
+  Toast.makeText(activity,"清理成功",Toast.LENGTH_SHORT).show()
 end
