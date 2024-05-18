@@ -26,8 +26,8 @@ textColorSecondary=Colors.getTextColorSecondary()--副文本色
 windowBackground=Colors.getWindowBackground()--窗体背景色
 
 
---服务器配置
-server="https://cdn.bwcxlg.top/"
+--主站域名，从主页传递过来
+serverUrl=...
 
 
 layout=--常规框架
@@ -177,16 +177,16 @@ adp=LuaRecyclerAdapter(activity,data,item).setAdapterInterface({
         view.svg.setImageURI(Uri.fromFile(File(file)))
        else
         --如果没有缓存，就先缓存
-        Http.download(server..data[position+1].img,file,function(a)
+        Http.download(serverUrl..data[position+1].img,file,function(a)
           --缓存完毕，加载图片
           view.svg.setImageURI(Uri.fromFile(File(file)))
         end)
       end
      else
-      Glide.with(activity).load(server..data[position+1].img).into(view.icon)
+      Glide.with(activity).load(serverUrl..data[position+1].img).into(view.icon)
     end
     view.card.onClick=function()
-      activity.newActivity("app",{data[position+1].url})
+      activity.newActivity("app",{serverUrl,data[position+1].url})
     end
   end
 })
@@ -200,7 +200,7 @@ function Get()
   loading.setVisibility(View.VISIBLE)
   progress.setVisibility(View.VISIBLE)
   message.setText("获取中……").onClick=function()end
-  Http.get(server.."index.json",nil,"UTF-8",nil,function(code,content,cookie,header)
+  Http.get(serverUrl.."index.json",nil,"UTF-8",nil,function(code,content,cookie,header)
     if(code==200 and content)then
       --获取成功
       recycler.setVisibility(View.VISIBLE)
