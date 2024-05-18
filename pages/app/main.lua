@@ -27,10 +27,8 @@ textColorSecondary=Colors.getTextColorSecondary()--副文本色
 windowBackground=Colors.getWindowBackground()--窗体背景色
 
 
---获取主页面传递过来的链接
-url=...
---服务器配置
-server="https://linguang.top/"
+--获取主页面传递过来的链接和主站域名
+serverUrl,url=...
 
 
 -- @param title 点击的菜单标题
@@ -39,10 +37,10 @@ function onMenuItemClick(title)
   switch title
    case "分享应用"
     import "androidx.core.app.ShareCompat"
-    ShareCompat.IntentBuilder.from(activity).setText(server..url).setType("text/plain").startChooser()
+    ShareCompat.IntentBuilder.from(activity).setText(serverUrl..url).setType("text/plain").startChooser()
    case "复制链接"
     import "android.content.Context"
-    activity.getSystemService(Context.CLIPBOARD_SERVICE).setText(server..url)
+    activity.getSystemService(Context.CLIPBOARD_SERVICE).setText(serverUrl..url)
     Toast.makeText(activity,"链接已复制到剪贴板",Toast.LENGTH_SHORT).show()
   end
 end
@@ -549,7 +547,7 @@ function Get()
   downloadCard.setVisibility(View.GONE)
   progress.setVisibility(View.VISIBLE)
   message.setText("获取中……").onClick=function()end
-  Http.get(server..url,nil,"UTF-8",nil,function(code,content,cookie,header)
+  Http.get(serverUrl..url,nil,"UTF-8",nil,function(code,content,cookie,header)
     if(code==200 and content)then
       --获取成功
 
@@ -579,7 +577,7 @@ function Get()
       预览图={}
       评分数据={}
       for k in content:match([[<div style="white(.-)</div>]]):gmatch([[<img src="(.-)" style="border]]) do
-        table.insert(预览图,{image=server.."apps/"..k})
+        table.insert(预览图,{image=serverUrl.."apps/"..k})
       end
       for k in content:gmatch([[<div align="center"style="float: left;width:33.3(.-)</div>]]) do
         table.insert(评分数据,k:match("height:80(.-)</p>"):match([[;">(.+)]]))
@@ -596,13 +594,13 @@ function Get()
           svg.setImageURI(Uri.fromFile(File(file)))
          else
           --如果没有缓存，就先缓存
-          Http.download(server.."apps/"..应用图标,file,function(a)
+          Http.download(serverUrl.."apps/"..应用图标,file,function(a)
             --缓存完毕，加载图片
             svg.setImageURI(Uri.fromFile(File(file)))
           end)
         end
        else
-        Glide.with(activity).load(server.."apps/"..应用图标).into(icon)
+        Glide.with(activity).load(serverUrl.."apps/"..应用图标).into(icon)
       end
       name.setText(应用名称)
       version.setText(应用版本.."  "..评分数据[3].."  "..评分数据[1])
@@ -619,13 +617,13 @@ function Get()
       imagesAdp.onItemClick=function(adapter,itemView,view,pos)
         local 应用图片={}
         for k in content:match([[<div style="white(.-)</div>]]):gmatch([[<img src="(.-)" style="border]]) do
-          table.insert(应用图片,server.."apps/"..k)
+          table.insert(应用图片,serverUrl.."apps/"..k)
         end
         table.insert(应用图片,{page=pos+1})
         activity.startFusionActivity("images",Bundle().putString("key",json.encode(应用图片)))
       end
 
-      下载链接=server..content:match("'/(.-)'")
+      下载链接=serverUrl..content:match("'/(.-)'")
       下载目录=activity.getSharedData("downloadPath")
       下载文件=content:match("'/(.-)'"):match(".+/(.+)$")
 

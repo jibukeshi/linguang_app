@@ -46,12 +46,12 @@ local html=[[
   </body>
 </html>
 ]]
-comment.loadDataWithBaseURL(server..url,html,"text/html","UTF-8",nil)
+comment.loadDataWithBaseURL(serverUrl..url,html,"text/html","UTF-8",nil)
 comment.removeView(comment.getChildAt(0))
 comment.setWebViewClient({
   shouldOverrideUrlLoading=function(view,url)
     --Url即将跳转
-    activity.newActivity("web",{url})
+    activity.newActivity("web",{serverUrl,url})
     return true
   end,
   onPageStarted=function(view,url,favicon)
