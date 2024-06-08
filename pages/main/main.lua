@@ -38,9 +38,9 @@ function testServers(selected)
      else
       if(selected~=#serverList)then--如果不是最后一个域名
         testServers(selected+1)
-        Toast.makeText(activity,选择.."号主站连接失败("..code..")，切换为"..(selected+1).."号主站",Toast.LENGTH_SHORT).show()
+        Toast.makeText(activity,selected.."号主站连接失败("..code..")，切换为"..(selected+1).."号主站",Toast.LENGTH_SHORT).show()
        else
-        Toast.makeText(activity,选择.."号主站连接失败("..code..")，所有主站都无法连接，请加群询问",Toast.LENGTH_SHORT).show()
+        Toast.makeText(activity,selected.."号主站连接失败("..code..")，所有主站都无法连接，请加群询问",Toast.LENGTH_SHORT).show()
       end
     end
   end)
